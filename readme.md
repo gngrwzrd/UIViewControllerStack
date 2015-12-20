@@ -164,7 +164,7 @@ If your view has a minimum height, you can provide that to the view stack which 
 - (CGFloat) minViewHeightForViewStackController:(UIViewControllerStack *) viewStack;
 ````
 
-If your views minimum height is greater than the height of the view stack, the view stack will be made vertically scrollable. To get a better idea of how that works, consider this code, which is essentially how it works with a few contrived lines of code to better illustrate:
+If your view's minimum height is greater than the height of the view stack, the view stack will be made vertically scrollable. To get a better idea of how that works, consider this code, which is essentially how it works with a few contrived lines of code to better illustrate:
 
 ````
 CGRect f = viewController.view.frame;
