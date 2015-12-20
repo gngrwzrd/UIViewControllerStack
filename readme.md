@@ -172,7 +172,7 @@ CGFloat minHeight = [viewController minViewHeightForViewStackController:self];
 if(self.frame.size.height < minHeight) {
 	f.size.height = minHeight; //leave your view at it's minimum height
 } else {
-	f.size.height = self.frame.size.height;
+	f.size.height = self.frame.size.height; //stretch your views height to match view stack height
 }
 viewController.frame = f;
 self.contentSize = f.size; //make scrollable
