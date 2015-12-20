@@ -143,7 +143,7 @@ typedef NS_ENUM(NSInteger,UIViewControllerStackOperation) {
 };
 ````
 
-There is also traditional NSNotifications available with:
+There's also traditional NSNotifications available with:
 
 ````
 extern NSString * const UIViewControllerStackNotificationWillPush;
