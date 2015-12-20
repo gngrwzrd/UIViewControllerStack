@@ -54,7 +54,7 @@ IB_DESIGNABLE
 @property IBInspectable CGFloat animationDuration;
 
 //whether to always resize your views frame to match this view stack's frame.
-//implement method from @protocol UIViewControllerStackUpdating to override this setting per view controller.
+//implement methods from @protocol UIViewControllerStackUpdating to override this setting per view controller.
 @property IBInspectable BOOL alwaysResizePushedViews;
 
 //methods for pushing/popping and altering what's displayed.
