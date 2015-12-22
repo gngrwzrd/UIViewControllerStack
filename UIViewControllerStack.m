@@ -17,6 +17,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 - (void) defaultInit {
 	self.viewControllers = [NSMutableArray array];
 	self.animationDuration = .25;
+	self.animatesAlpha = FALSE;
 	self.delaysContentTouches = FALSE;
 }
 
@@ -116,7 +117,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	return CGPointZero;
 }
 
-- (void) animatePushFromController:(UIViewController *) fromController toController:(UIViewController *) toController withDuration:(CGFloat) duration {
+- (void) pushFromController:(UIViewController *) fromController toController:(UIViewController *) toController withDuration:(CGFloat) duration {
 	UIViewController <UIViewControllerStackUpdating> * toControllerUpdating = (UIViewController <UIViewControllerStackUpdating> *)toController;
 	UIViewController <UIViewControllerStackUpdating> * fromControllerUpdating = (UIViewController <UIViewControllerStackUpdating> *)fromController;
 	
@@ -145,7 +146,8 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	if([toController respondsToSelector:@selector(viewStack:willShowView:wasAnimated:)]) {
 		[toControllerUpdating viewStack:self willShowView:UIViewControllerStackOperationPush wasAnimated:(duration>0)];
 	}
-	if([fromController respondsToSelector:@selector(viewStack:willHideView:wasAnimated:)]) {
+	
+	if(fromController && [fromController respondsToSelector:@selector(viewStack:willHideView:wasAnimated:)]) {
 		[fromControllerUpdating viewStack:self willHideView:UIViewControllerStackOperationPush wasAnimated:(duration>0)];
 	}
 	
@@ -154,9 +156,11 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	if(toController) {
 		[userInfo setObject:toController forKey:UIViewControllerStackNotificationUserInfoToControllerKey];
 	}
+	
 	if(fromController) {
 		[userInfo setObject:fromController forKey:UIViewControllerStackNotificationUserInfoFromControllerKey];
 	}
+	
 	[[NSNotificationCenter defaultCenter] postNotificationName:UIViewControllerStackNotificationWillPush object:self userInfo:userInfo];
 	
 	//if duration is 0, set everything immediately without UIView animations.
@@ -164,12 +168,6 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	if(duration == 0) {
 		
 		CGRect f;
-		
-		//move to controller
-		f = toController.view.frame;
-		f.origin = [self endPointForToController:toController forOperation:UIViewControllerStackOperationPush];
-		toController.view.frame = f;
-		toController.view.alpha = 1;
 		
 		//move from controller
 		if(fromController) {
@@ -180,11 +178,18 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 			fromController.view.alpha = 1;
 		}
 		
+		//move to controller
+		f = toController.view.frame;
+		f.origin = [self endPointForToController:toController forOperation:UIViewControllerStackOperationPush];
+		toController.view.frame = f;
+		toController.view.alpha = 1;
+		
 		//notify controllers of what's about to happen
 		if(fromController && [fromController respondsToSelector:@selector(viewStack:didHideView:wasAnimated:)]) {
 			[fromControllerUpdating viewStack:self didHideView:UIViewControllerStackOperationPush wasAnimated:(duration>0)];
 		}
-		if(toController && [toController respondsToSelector:@selector(viewStack:didShowView:wasAnimated:)]) {
+		
+		if([toController respondsToSelector:@selector(viewStack:didShowView:wasAnimated:)]) {
 			[toControllerUpdating viewStack:self didShowView:UIViewControllerStackOperationPush wasAnimated:(duration>0)];
 		}
 		
@@ -198,14 +203,6 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	[UIView animateWithDuration:duration delay:0 options:options animations:^{
 		CGRect f;
 		
-		//move to controller
-		f = toController.view.frame;
-		f.origin = [self endPointForToController:toController forOperation:UIViewControllerStackOperationPush];
-		toController.view.frame = f;
-		if(self.animatesAlpha) {
-			toController.view.alpha = 1;
-		}
-		
 		//move from controller
 		if(fromController) {
 			f = fromController.view.frame;
@@ -216,12 +213,22 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 			}
 		}
 		
+		//move to controller
+		f = toController.view.frame;
+		f.origin = [self endPointForToController:toController forOperation:UIViewControllerStackOperationPush];
+		toController.view.frame = f;
+		if(self.animatesAlpha) {
+			toController.view.alpha = 1;
+		}
+		
 	} completion:^(BOOL finished) {
 		
-		[fromController.view removeFromSuperview];
-		fromController.view.alpha = 1;
+		if(fromController) {
+			[fromController.view removeFromSuperview];
+			fromController.view.alpha = 1;
+		}
 		
-		if([fromController respondsToSelector:@selector(viewStack:didHideView:wasAnimated:)]) {
+		if(fromController && [fromController respondsToSelector:@selector(viewStack:didHideView:wasAnimated:)]) {
 			[fromControllerUpdating viewStack:self didHideView:UIViewControllerStackOperationPush wasAnimated:(duration>0)];
 		}
 		
@@ -233,7 +240,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	}];
 }
 
-- (void) animatePopFromController:(UIViewController *) fromController toController:(UIViewController *) toController withDuration:(CGFloat) duration {
+- (void) popFromController:(UIViewController *) fromController toController:(UIViewController *) toController withDuration:(CGFloat) duration {
 	UIViewController <UIViewControllerStackUpdating> * toControllerUpdating = (UIViewController <UIViewControllerStackUpdating> *)toController;
 	UIViewController <UIViewControllerStackUpdating> * fromControllerUpdating = (UIViewController <UIViewControllerStackUpdating> *)fromController;
 	
@@ -266,18 +273,21 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	if([fromController respondsToSelector:@selector(viewStack:willHideView:wasAnimated:)]) {
 		[fromControllerUpdating viewStack:self willHideView:UIViewControllerStackOperationPop wasAnimated:(duration>0)];
 	}
-	if([toController respondsToSelector:@selector(viewStack:willShowView:wasAnimated:)]) {
+	if(toController && [toController respondsToSelector:@selector(viewStack:willShowView:wasAnimated:)]) {
 		[toControllerUpdating viewStack:self willShowView:UIViewControllerStackOperationPop wasAnimated:(duration>0)];
 	}
 	
 	//setup/post notification user info
 	NSMutableDictionary * userInfo = [[NSMutableDictionary alloc] init];
+	
 	if(toController) {
 		[userInfo setObject:toController forKey:UIViewControllerStackNotificationUserInfoToControllerKey];
 	}
+	
 	if(fromController) {
 		[userInfo setObject:fromController forKey:UIViewControllerStackNotificationUserInfoFromControllerKey];
 	}
+	
 	[[NSNotificationCenter defaultCenter] postNotificationName:UIViewControllerStackNotificationWillPop object:self userInfo:userInfo];
 	
 	//if duration is 0, set everything immediately without UIView animations.
@@ -285,6 +295,13 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	if(duration == 0) {
 		
 		CGRect f;
+		
+		//move from controller
+		f = fromController.view.frame;
+		f.origin = [self endPointForFromController:fromController forOperation:UIViewControllerStackOperationPop];
+		fromController.view.frame = f;
+		[fromController.view removeFromSuperview];
+		fromController.view.alpha = 1;
 		
 		//move to controller
 		if(toController) {
@@ -294,18 +311,12 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 			toController.view.alpha = 1;
 		}
 		
-		//move from controller
-		f = fromController.view.frame;
-		f.origin = [self endPointForFromController:fromController forOperation:UIViewControllerStackOperationPop];
-		fromController.view.frame = f;
-		[fromController.view removeFromSuperview];
-		fromController.view.alpha = 1;
-		
 		//notify view controller of what just happened.
 		if([fromController respondsToSelector:@selector(viewStack:didHideView:wasAnimated:)]) {
 			[fromControllerUpdating viewStack:self didHideView:UIViewControllerStackOperationPop wasAnimated:(duration>0)];
 		}
-		if([toController respondsToSelector:@selector(viewStack:didShowView:wasAnimated:)]) {
+		
+		if(toController && [toController respondsToSelector:@selector(viewStack:didShowView:wasAnimated:)]) {
 			[toControllerUpdating viewStack:self didShowView:UIViewControllerStackOperationPop wasAnimated:(duration>0)];
 		}
 		
@@ -348,7 +359,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 			[fromControllerUpdating viewStack:self didHideView:UIViewControllerStackOperationPop wasAnimated:(duration>0)];
 		}
 		
-		if([toController respondsToSelector:@selector(viewStack:didShowView:wasAnimated:)]) {
+		if(toController && [toController respondsToSelector:@selector(viewStack:didShowView:wasAnimated:)]) {
 			[toControllerUpdating viewStack:self didShowView:UIViewControllerStackOperationPop wasAnimated:(duration>0)];
 		}
 		
@@ -361,7 +372,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	if(animated) {
 		duration = self.animationDuration;
 	}
-	[self animatePushFromController:[self currentViewController] toController:viewController withDuration:duration];
+	[self pushFromController:[self currentViewController] toController:viewController withDuration:duration];
 	[self.viewControllers addObject:viewController];
 }
 
@@ -372,7 +383,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	if(animated) {
 		duration = self.animationDuration;
 	}
-	[self animatePushFromController:current toController:self.viewControllers.lastObject withDuration:duration];
+	[self pushFromController:current toController:self.viewControllers.lastObject withDuration:duration];
 }
 
 - (void) pushViewControllers:(NSArray *) viewControllers; {
@@ -390,7 +401,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	if(animated) {
 		duration = self.animationDuration;
 	}
-	[self animatePopFromController:current toController:nxt withDuration:duration];
+	[self popFromController:current toController:nxt withDuration:duration];
 }
 
 - (void) popToRootViewControllerAnimated:(BOOL) animated; {
@@ -400,7 +411,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	if(animated) {
 		duration = self.animationDuration;
 	}
-	[self animatePopFromController:current toController:nxt withDuration:duration];
+	[self popFromController:current toController:nxt withDuration:duration];
 	[self.viewControllers removeAllObjects];
 	[self.viewControllers addObject:nxt];
 }
@@ -410,7 +421,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	if(animated) {
 		duration = self.animationDuration;
 	}
-	[self animatePushFromController:self.currentViewController toController:viewController withDuration:duration];
+	[self pushFromController:self.currentViewController toController:viewController withDuration:duration];
 	[self.viewControllers removeAllObjects];
 	[self.viewControllers addObject:viewController];
 }
@@ -421,7 +432,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	if(animated) {
 		duration = self.animationDuration;
 	}
-	[self animatePushFromController:currentViewController toController:viewController withDuration:duration];
+	[self pushFromController:currentViewController toController:viewController withDuration:duration];
 	[_viewControllers addObject:viewController];
 }
 
@@ -476,7 +487,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	NSUInteger location = index + 1;
 	NSUInteger length = self.viewControllers.count - location;
 	[self.viewControllers removeObjectsInRange:NSMakeRange(location,length)];
-	[self animatePopFromController:fromController toController:toController withDuration:duration];
+	[self popFromController:fromController toController:toController withDuration:duration];
 }
 
 - (BOOL) hasViewController:(UIViewController *) viewController {
