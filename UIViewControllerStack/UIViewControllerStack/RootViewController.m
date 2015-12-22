@@ -5,7 +5,7 @@
 
 - (void) viewDidLoad {
 	[super viewDidLoad];
-	self.viewStack.animatesAlpha = TRUE;
+	self.viewStack.animatesAlpha = FALSE;
 }
 
 - (IBAction) onStart:(id) sender {
