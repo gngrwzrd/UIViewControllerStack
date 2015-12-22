@@ -304,23 +304,17 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 }
 
 - (void) replaceCurrentViewControllerWithViewController:(UIViewController *) viewController animated:(BOOL) animated; {
-	UIViewController * currentViewController = [self currentViewController];
+	UIViewController * currentViewController = [self currentViewControllerByRemovingLastObject];
 	float duration = 0;
 	if(animated) {
 		duration = self.animationDuration;
 	}
 	[self animatePushFromController:currentViewController toController:viewController withDuration:duration];
-	[_viewControllers removeObject:currentViewController];
 	[_viewControllers addObject:viewController];
 }
 
 - (void) replaceViewController:(UIViewController *) viewController withViewController:(UIViewController *) newViewController; {
-	NSInteger index = 0;
-	for(UIViewController * vc in self.viewControllers) {
-		if(vc == viewController) {
-			index = [self.viewControllers indexOfObject:viewController];
-		}
-	}
+	NSInteger index = [self.viewControllers indexOfObject:viewController];
 	if(index != NSNotFound) {
 		[self.viewControllers replaceObjectAtIndex:index withObject:newViewController];
 	}
@@ -354,12 +348,22 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 }
 
 - (void) popToViewControllerInStackAtIndex:(NSUInteger) index animated:(BOOL) animated {
+	if(index == 0) {
+		[self popToRootViewControllerAnimated:TRUE];
+		return;
+	}
+	if(index == self.viewControllers.count - 1) {
+		return;
+	}
 	UIViewController * toController = [self.viewControllers objectAtIndex:index];
 	UIViewController * fromController = self.currentViewController;
 	float duration = 0;
 	if(animated) {
 		duration = self.animationDuration;
 	}
+	NSUInteger location = index + 1;
+	NSUInteger length = self.viewControllers.count - location;
+	[self.viewControllers removeObjectsInRange:NSMakeRange(location,length)];
 	[self animatePopFromController:fromController toController:toController withDuration:duration];
 }
 
