@@ -5,12 +5,12 @@
 
 - (void) viewDidLoad {
 	[super viewDidLoad];
-	//self.viewStack.animatesAlpha = TRUE;
+	self.viewStack.animatesAlpha = TRUE;
 }
 
 - (IBAction) onStart:(id) sender {
 	HomeViewController * home = [[HomeViewController alloc] initWithNibName:@"HomeViewController" bundle:nil];
-	[self.viewStack eraseStackAndPushViewController:home animated:FALSE];
+	[self.viewStack pushViewController:home animated:FALSE];
 }
 
 @end
