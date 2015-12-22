@@ -347,7 +347,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	return [NSArray arrayWithArray:self.viewControllers];
 }
 
-- (void) popToViewControllerInStackAtIndex:(NSUInteger) index animated:(BOOL) animated {
+- (void) popToViewControllerAtIndex:(NSUInteger) index animated:(BOOL) animated {
 	if(index == 0) {
 		[self popToRootViewControllerAnimated:TRUE];
 		return;

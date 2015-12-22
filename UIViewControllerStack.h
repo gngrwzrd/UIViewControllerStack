@@ -62,7 +62,7 @@ IB_DESIGNABLE
 - (void) pushViewControllers:(NSArray *) viewControllers animated:(BOOL) animated;
 - (void) popViewControllerAnimated:(BOOL) animated;
 - (void) popToRootViewControllerAnimated:(BOOL) animated;
-- (void) popToViewControllerInStackAtIndex:(NSUInteger) index animated:(BOOL) animated;
+- (void) popToViewControllerAtIndex:(NSUInteger) index animated:(BOOL) animated;
 - (void) replaceCurrentViewControllerWithViewController:(UIViewController *) viewController animated:(BOOL) animated;
 - (void) eraseStackAndPushViewController:(UIViewController *) viewController animated:(BOOL) animated;
 
