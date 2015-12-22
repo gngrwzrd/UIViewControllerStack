@@ -72,7 +72,7 @@ You can completely erase the stack and start a new root view controller with:
 [viewStack eraseStackAndPushViewController:myViewController animated:TRUE];
 ````
 
-Or you can complete erase and remove all view controllers, leaving the view stack empty with no views being visible:
+Or you can completely erase and remove all view controllers, leaving the view stack empty with no views being visible:
 
 ````
 [viewStack eraseStack];
