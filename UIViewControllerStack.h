@@ -39,9 +39,6 @@ typedef NS_ENUM(NSInteger,UIViewControllerStackOperation) {
 //tell the view stack if it should resize your views frame to match the view stack frame
 - (BOOL) shouldResizeFrameForStackPush:(UIViewControllerStack *) viewStack;
 
-//tell the view stack a custom frame to apply to your views frame
-- (CGRect) viewFrameForViewStackController:(UIViewControllerStack *) viewStack;
-
 //tell the view stack a minimum height for you view which can trigger vertical scrolling.
 - (CGFloat) minViewHeightForViewStackController:(UIViewControllerStack *) viewStack;
 
@@ -52,6 +49,9 @@ IB_DESIGNABLE
 
 //animation duration for push/popping view controllers that slide in / out.
 @property IBInspectable CGFloat animationDuration;
+
+//whether to animate alpha as views are being pushed / popped.
+@property IBInspectable BOOL animatesAlpha;
 
 //whether to always resize your views frame to match this view stack's frame.
 //implement methods from @protocol UIViewControllerStackUpdating to override this setting per view controller.

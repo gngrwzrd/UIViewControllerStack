@@ -20,7 +20,13 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	self.delaysContentTouches = FALSE;
 }
 
-- (id) initWithCoder:(NSCoder *)aDecoder {
+- (id) init {
+	self = [super init];
+	[self defaultInit];
+	return self;
+}
+
+- (id) initWithCoder:(NSCoder *) aDecoder {
 	self = [super initWithCoder:aDecoder];
 	[self defaultInit];
 	return self;
@@ -40,7 +46,6 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 		return;
 	}
 	
-	//NSLog(@"layed out subviews");
 	[self resizeViewController:current];
 }
 
@@ -68,14 +73,6 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 		}
 	}
 	
-	if([updating respondsToSelector:@selector(viewFrameForViewStackController:)]) {
-		CGRect newFrame = [updating viewFrameForViewStackController:self];
-		if(!CGRectEqualToRect(newFrame, CGRectZero)) {
-			f = newFrame;
-			updatedFrame = TRUE;
-		}
-	}
-	
 	if([updating respondsToSelector:@selector(minViewHeightForViewStackController:)]) {
 		CGFloat minHeight = [updating minViewHeightForViewStackController:self];
 		updatedFrame = TRUE;
@@ -95,19 +92,47 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	self.contentSize = f.size;
 }
 
+- (CGPoint) startPointForToController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation {
+	if(operation == UIViewControllerStackOperationPush) {
+		return CGPointMake(self.frame.size.width,0);
+	}
+	if(operation == UIViewControllerStackOperationPop) {
+		return CGPointMake(-(viewController.view.frame.size.width),0);
+	}
+	return CGPointZero;
+}
+
+- (CGPoint) endPointForToController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation {
+	return CGPointMake(0,0);
+}
+
+- (CGPoint) endPointForFromController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation {
+	if(operation == UIViewControllerStackOperationPush) {
+		return CGPointMake(-(viewController.view.frame.size.width),0);
+	}
+	if(operation == UIViewControllerStackOperationPop) {
+		return CGPointMake(viewController.view.frame.size.width,0);
+	}
+	return CGPointZero;
+}
+
 - (void) animatePushFromController:(UIViewController *) fromController toController:(UIViewController *) toController withDuration:(CGFloat) duration {
 	UIViewController <UIViewControllerStackUpdating> * toControllerUpdating = (UIViewController <UIViewControllerStackUpdating> *)toController;
 	UIViewController <UIViewControllerStackUpdating> * fromControllerUpdating = (UIViewController <UIViewControllerStackUpdating> *)fromController;
 	
-	//move view controller off to right side and add as subview
-	CGRect f = toController.view.frame;
-	f.origin.y = 0;
-	f.origin.x = self.frame.size.width;
-	toController.view.frame = f;
-	
 	//resize view controllers
 	[self resizeViewController:fromController];
 	[self resizeViewController:toController];
+	
+	//move view controller off to right side and add as subview
+	CGRect f = toController.view.frame;
+	f.origin = [self startPointForToController:toController forOperation:UIViewControllerStackOperationPush];
+	toController.view.frame = f;
+	
+	//set alphs
+	if(self.animatesAlpha) {
+		toController.view.alpha = 0;
+	}
 	
 	//add subview
 	[self addSubview:toController.view];
@@ -125,6 +150,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 		[fromControllerUpdating viewStack:self willHideView:UIViewControllerStackOperationPush wasAnimated:(duration>0)];
 	}
 	
+	//setup notification info
 	NSMutableDictionary * userInfo = [[NSMutableDictionary alloc] init];
 	
 	if(toController) {
@@ -142,20 +168,32 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 		CGRect f;
 		
 		if(fromController) {
+			
+			//get end point for from controller
 			f = fromController.view.frame;
-			f.origin.y = 0;
-			f.origin.x -= f.size.width;
+			f.origin = [self endPointForFromController:fromController forOperation:UIViewControllerStackOperationPush];
 			fromController.view.frame = f;
+			
+			//animate alpha
+			if(self.animatesAlpha) {
+				fromController.view.alpha = 0;
+			}
 		}
 		
+		//get end point for to controller
 		f = toController.view.frame;
-		f.origin.y = 0;
-		f.origin.x = 0;
+		f.origin = [self endPointForToController:toController forOperation:UIViewControllerStackOperationPush];
 		toController.view.frame = f;
+		
+		//animate alpha
+		if(self.animatesAlpha) {
+			toController.view.alpha = 1;
+		}
 		
 	} completion:^(BOOL finished) {
 		
 		[fromController.view removeFromSuperview];
+		fromController.view.alpha = 1;
 		
 		if([fromController respondsToSelector:@selector(viewStack:didHideView:wasAnimated:)]) {
 			[fromControllerUpdating viewStack:self didHideView:UIViewControllerStackOperationPush wasAnimated:(duration>0)];
@@ -169,7 +207,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	}];
 }
 
-- (void) animatePopFromController:(UIViewController *) fromController toController:(UIViewController *) toController withDuration:(CGFloat)duration{
+- (void) animatePopFromController:(UIViewController *) fromController toController:(UIViewController *) toController withDuration:(CGFloat) duration {
 	UIViewController <UIViewControllerStackUpdating> * toControllerUpdating = (UIViewController <UIViewControllerStackUpdating> *)toController;
 	UIViewController <UIViewControllerStackUpdating> * fromControllerUpdating = (UIViewController <UIViewControllerStackUpdating> *)fromController;
 	
@@ -179,10 +217,18 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	
 	//move the next view controller off to left of host view and add as subview
 	if(toController) {
+		
+		//get start point for toController
 		CGRect f = toController.view.frame;
-		f.origin.y = 0;
-		f.origin.x = -(f.size.width);
+		f.origin = [self startPointForToController:toController forOperation:UIViewControllerStackOperationPop];
 		toController.view.frame = f;
+		
+		//animate alpha
+		if(self.animatesAlpha) {
+			toController.view.alpha = 0;
+		}
+		
+		//add subview
 		[self addSubview:toController.view];
 	}
 	
@@ -216,21 +262,35 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	//trigger animation, moving popped off to right, next view controller in from the left
 	[UIView animateWithDuration:duration delay:0 options:options animations:^{
 		
+		//get end point for from controller
 		CGRect f = fromController.view.frame;
-		f.origin.x += self.frame.size.width;
-		f.origin.y = 0;
+		f.origin = [self endPointForFromController:fromController forOperation:UIViewControllerStackOperationPop];
 		fromController.view.frame = f;
 		
+		//animate alpha
+		if(self.animatesAlpha) {
+			fromController.view.alpha = 0;
+		}
+		
 		if(toController) {
+			
+			//get end point for to controller
 			f = toController.view.frame;
-			f.origin.y = 0;
-			f.origin.x = 0;
+			f.origin = [self endPointForToController:toController forOperation:UIViewControllerStackOperationPop];
 			toController.view.frame = f;
+			
+			if(self.animatesAlpha) {
+				toController.view.alpha = 1;
+			}
 		}
 		
 	} completion:^(BOOL finished) {
 		
 		[fromController.view removeFromSuperview];
+		
+		if(self.animatesAlpha) {
+			fromController.view.alpha = 1;
+		}
 		
 		if([fromController respondsToSelector:@selector(viewStack:didHideView:wasAnimated:)]) {
 			[fromControllerUpdating viewStack:self didHideView:UIViewControllerStackOperationPop wasAnimated:(duration>0)];

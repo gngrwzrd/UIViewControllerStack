@@ -20,6 +20,14 @@ You can change animation duration in interface builder, or with:
 viewStack.animationDuration = .25;
 ````
 
+### Alpha
+
+You can optionally turn on alpha animations with:
+
+````
+viewStack.animatesAlpha = TRUE;
+````
+
 ### Pushing view controllers
 
 To setup the first view controller in the stack, you can push a view controller without animating it:
@@ -114,12 +122,6 @@ Or you can pick and choose which views to auto resize by implementing the @proto
 
 ````
 - (BOOL) shouldResizeFrameForStackPush:(UIViewControllerStack *) viewStack;
-````
-
-You can also provide a custom frame for your view with:
-
-````
-- (CGRect) viewFrameForViewStackController:(UIViewControllerStack *) viewStack;
 ````
 
 ### Stack update notifications
