@@ -166,35 +166,6 @@ There are a few other utility methods that can be useful at times:
 - (NSArray *) allViewControllers;
 ````
 
-## Title Bars
-
-This class doesn't include any kind of title bar, it's up to you to create. Most of the time this is more flexible anyway. There's typically two ways I would to do it:
-
-1. Include title bars in each of your view controllers, they will animate in / out as you push / pop view controllers since their contained in your view controllers. This is the easiest way to include title bars. And this is also the easiest if your title bar heights may change.
-
-2. Setup a persistant title bar yourself, and put the view stack controller below it. It's up to you then to control what's displayed in the title bar. You can easily do this with the hooks provided by the @protocol UIViewControllerStackUpdating.
-
-An example for number 2 would look like this:
-
-````
-/** In MyListViewController.m **/
-- (void) viewStack:(UIViewControllerStack *) viewStack willShowView:(UIViewControllerStackOperation) operation wasAnimated:(BOOL) wasAnimated; {
-    if(operation == UIViewControllerStackOperationPush) {
-        [myCustomTitleBar showTitleBarContentForRootViewController];
-    }
-    if(operaiton == UIViewControllerStackOperationPop) {
-        [myCustomTitleBar showTitleBarContentForRootViewController];
-    }
-}
-
-/** In MyDetailCustomViewController.m **/
-- (void) viewStack:(UIViewControllerStack *) viewStack willShowView:(UIViewControllerStackOperation) operation wasAnimated:(BOOL) wasAnimated; {
-    if(operation == UIViewControllerStackOperationPush) {
-        [myCustomTitleBar showTitleBarContentForDetailViewController];
-    }
-}
-````
-
 ## License
 
 The MIT License (MIT)
