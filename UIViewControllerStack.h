@@ -21,26 +21,29 @@ typedef NS_ENUM(NSInteger,UIViewControllerStackOperation) {
 @protocol UIViewControllerStackUpdating <NSObject>
 @optional
 
-//sent before the view stack pushes a view controller
+//called on your view controller before the view stack pushes a view controller
 - (void) viewStack:(UIViewControllerStack *) viewStack willShowView:(UIViewControllerStackOperation) operation wasAnimated:(BOOL) wasAnimated;
 
-//sent before the view stack pops a view controller
+//called on your view controller before the view stack pops a view controller
 - (void) viewStack:(UIViewControllerStack *) viewStack willHideView:(UIViewControllerStackOperation) operation wasAnimated:(BOOL) wasAnimated;
 
-//sent after the view stack pushes a view controller
+//called on your view controller after the view stack pushes a view controller
 - (void) viewStack:(UIViewControllerStack *) viewStack didShowView:(UIViewControllerStackOperation) operation wasAnimated:(BOOL) wasAnimated;
 
-//sent after the view stack pops a view controller
+//called on your view controller after the view stack pops a view controller
 - (void) viewStack:(UIViewControllerStack *) viewStack didHideView:(UIViewControllerStackOperation) operation wasAnimated:(BOOL) wasAnimated;
 
-//sent after the view stack resized a view controller
-- (void) viewStack:(UIViewControllerStack *) viewStack didResizeViewController:(UIViewController *) viewController;
+//called on your view controller after it was resized
+- (void) viewStackDidResizeViewController:(UIViewControllerStack *) viewStack;
 
 //tell the view stack if it should resize your views frame to match the view stack frame
 - (BOOL) shouldResizeFrameForStackPush:(UIViewControllerStack *) viewStack;
 
-//tell the view stack a minimum height for you view which can trigger vertical scrolling.
+//tell the view stack a minimum height for you view
 - (CGFloat) minViewHeightForViewStackController:(UIViewControllerStack *) viewStack;
+
+//tell the view stack if it should become scrollable
+- (BOOL) viewStackShouldBecomeScrollable:(UIViewControllerStack *) viewStack;
 
 @end
 
@@ -80,6 +83,7 @@ IB_DESIGNABLE
 - (BOOL) hasViewControllerClass:(Class) cls;
 - (NSInteger) stackSize;
 - (UIViewController *) currentViewController;
+- (UIViewController *) rootViewController;
 - (NSArray *) allViewControllers;
 
 @end

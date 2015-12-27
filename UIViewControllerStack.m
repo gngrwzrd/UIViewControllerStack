@@ -86,11 +86,18 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	
 	viewController.view.frame = f;
 	
-	if([updating respondsToSelector:@selector(viewStack:didResizeViewController:)]) {
-		[updating viewStack:self didResizeViewController:updating];
+	if([updating respondsToSelector:@selector(viewStackDidResizeViewController:)]) {
+		[updating viewStackDidResizeViewController:self];
+	}
+	
+	BOOL becomeScrollable = FALSE;
+	
+	if([updating respondsToSelector:@selector(viewStackShouldBecomeScrollable:)]) {
+		becomeScrollable = [updating viewStackShouldBecomeScrollable:self];
 	}
 	
 	self.contentSize = f.size;
+	self.scrollEnabled = becomeScrollable;
 }
 
 - (CGPoint) startPointForToController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation {
@@ -367,8 +374,10 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	if(animated) {
 		duration = self.animationDuration;
 	}
-	[self pushFromController:[self currentViewController] toController:viewController withDuration:duration];
+	
+	UIViewController * current = [self currentViewController];
 	[self.viewControllers addObject:viewController];
+	[self pushFromController:current toController:viewController withDuration:duration];
 }
 
 - (void) pushViewControllers:(NSArray *) viewControllers animated:(BOOL) animated; {
@@ -443,6 +452,10 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 		return [self.viewControllers lastObject];
 	}
 	return nil;
+}
+
+- (UIViewController *) rootViewController; {
+	return self.viewControllers.firstObject;
 }
 
 - (UIViewController *) currentViewControllerByRemovingLastObject {
