@@ -2,12 +2,6 @@
 
 UIViewControllerStack is a stack like data structure for pushing and popping view controllers in and out of view.
 
-## Use Case
-
-I built this to be able to quickly setup applications that look like a UINavigationController based application. But without so much (in my opinion) boiler plate code and setup times.
-
-I've successfully used this class in many iOS apps, it's super useful and very quick to setup. You can easily get a navigation based application setup with little work.
-
 ## UIViewControllerStack Object
 
 You can use UIVIewControllerStack in interface builder or setup manually with initWithFrame:.
