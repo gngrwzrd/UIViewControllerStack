@@ -18,6 +18,7 @@ static ViewController * _instance;
 	[super viewDidLoad];
 	_instance = self;
 	self.viewStack.alwaysResizePushedViews = TRUE;
+	
 	ShortView * shortview = [[ShortView alloc] init];
 	[self.viewStack pushViewController:shortview animated:FALSE];
 }

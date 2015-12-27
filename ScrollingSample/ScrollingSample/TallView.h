@@ -1,7 +1,8 @@
 
 #import <UIKit/UIKit.h>
 #import "UIViewControllerStack.h"
+#import "UIScrollableViewController.h"
 
-@interface TallView : UIViewController <UIViewControllerStackUpdating>
+@interface TallView : UIScrollableViewController <UIViewControllerStackUpdating>
 
 @end

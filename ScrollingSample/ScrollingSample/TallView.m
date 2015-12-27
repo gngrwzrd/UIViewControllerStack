@@ -11,15 +11,6 @@
 
 - (void) viewDidLoad {
 	[super viewDidLoad];
-	self.nibHeight = self.view.frame.size.height;
-}
-
-- (CGFloat) minViewHeightForViewStackController:(UIViewControllerStack *)viewStack {
-	return self.nibHeight;
-}
-
-- (BOOL) viewStackShouldBecomeScrollable:(UIViewControllerStack *) viewStack {
-	return TRUE;
 }
 
 - (IBAction) pushMain:(id) sender {

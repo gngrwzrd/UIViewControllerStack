@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9060" systemVersion="15C40a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MainScreen">
+            <connections>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ww5-sR-pbF">
+                    <rect key="frame" x="262" y="285" width="77" height="30"/>
+                    <animations/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="77" id="DAi-g7-mZF"/>
+                        <constraint firstAttribute="height" constant="30" id="gqp-2W-qZr"/>
+                    </constraints>
+                    <state key="normal" title="Signup"/>
+                    <connections>
+                        <action selector="onSignup:" destination="-1" eventType="touchUpInside" id="JBV-Am-P7C"/>
+                    </connections>
+                </button>
+            </subviews>
+            <animations/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="Ww5-sR-pbF" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="MP6-8K-SNZ"/>
+                <constraint firstItem="Ww5-sR-pbF" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="gWn-xO-dP9"/>
+            </constraints>
+            <point key="canvasLocation" x="490" y="526"/>
+        </view>
+    </objects>
+</document>

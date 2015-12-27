@@ -8,6 +8,23 @@ NSString * const UIViewControllerStackNotificationDidPop = @"UIViewControllerSta
 NSString * const UIViewControllerStackNotificationUserInfoToControllerKey = @"UIViewControllerStackNotificationUserInfoToControllerKey";
 NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"UIViewControllerStackNotificationUserInfoFromControllerKey";
 
+@implementation UIViewController (UIViewControllerParentViewStack)
+
+- (UIViewControllerStack *) parentViewControllerStack; {
+	UIView * superview = self.view.superview;
+	NSInteger count = 20;
+	while(superview && count > -1) {
+		if([superview isKindOfClass:[UIViewControllerStack class]]) {
+			return (UIViewControllerStack *)superview;
+		}
+		superview = superview.superview;
+		count--;
+	}
+	return nil;
+}
+
+@end
+
 @interface UIViewControllerStack ()
 @property NSMutableArray * viewControllers;
 @end
@@ -18,7 +35,6 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	self.viewControllers = [NSMutableArray array];
 	self.animationDuration = .25;
 	self.animatesAlpha = FALSE;
-	self.delaysContentTouches = FALSE;
 }
 
 - (id) init {
@@ -41,13 +57,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 
 - (void) layoutSubviews {
 	[super layoutSubviews];
-	
-	UIViewController * current = [self currentViewController];
-	if(!current) {
-		return;
-	}
-	
-	[self resizeViewController:current];
+	[self resizeViewController:self.currentViewController];
 }
 
 - (void) resizeViewController:(UIViewController *) viewController {
@@ -74,53 +84,42 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 		}
 	}
 	
-	if([updating respondsToSelector:@selector(minViewHeightForViewStackController:)]) {
-		CGFloat minHeight = [updating minViewHeightForViewStackController:self];
-		updatedFrame = TRUE;
-		if(self.frame.size.height > minHeight) {
-			f.size.height = self.frame.size.height;
-		} else {
-			f.size.height = minHeight;
-		}
+	if(!CGRectEqualToRect(f,viewController.view.frame)) {
+		viewController.view.frame = f;
 	}
-	
-	viewController.view.frame = f;
 	
 	if([updating respondsToSelector:@selector(viewStackDidResizeViewController:)]) {
 		[updating viewStackDidResizeViewController:self];
 	}
-	
-	BOOL becomeScrollable = FALSE;
-	
-	if([updating respondsToSelector:@selector(viewStackShouldBecomeScrollable:)]) {
-		becomeScrollable = [updating viewStackShouldBecomeScrollable:self];
-	}
-	
-	self.contentSize = f.size;
-	self.scrollEnabled = becomeScrollable;
 }
 
 - (CGPoint) startPointForToController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation {
 	if(operation == UIViewControllerStackOperationPush) {
 		return CGPointMake(self.frame.size.width,0);
 	}
+	
 	if(operation == UIViewControllerStackOperationPop) {
 		return CGPointMake(-(viewController.view.frame.size.width),0);
 	}
+	
 	return CGPointZero;
 }
 
 - (CGPoint) endPointForToController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation {
-	return CGPointZero;
+	return CGPointMake(0,0);
 }
 
 - (CGPoint) endPointForFromController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation {
+	CGRect f = viewController.view.frame;
+	
 	if(operation == UIViewControllerStackOperationPush) {
-		return CGPointMake(-(viewController.view.frame.size.width),0);
+		return CGPointMake(-(viewController.view.frame.size.width),f.origin.y);
 	}
+	
 	if(operation == UIViewControllerStackOperationPop) {
-		return CGPointMake(viewController.view.frame.size.width,0);
+		return CGPointMake(viewController.view.frame.size.width,f.origin.y);
 	}
+	
 	return CGPointZero;
 }
 

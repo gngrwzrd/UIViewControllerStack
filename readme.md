@@ -156,30 +156,6 @@ extern NSString * const UIViewControllerStackNotificationUserInfoToControllerKey
 extern NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey;
 ````
 
-### UIViewControllerStack is a UIScrollView
-
-UIViewControllerStack subclasses UIScrollView so that views being pushed / popped can easily be made scrollable.
-
-If your view has a minimum height, you can provide that to the view stack which will make the view stack vertically scrollable.
-
-````
-- (CGFloat) minViewHeightForViewStackController:(UIViewControllerStack *) viewStack;
-````
-
-If your view's minimum height is greater than the height of the view stack, the view stack will be made vertically scrollable. To get a better idea of how that works, consider this code, which is essentially how it works with a few contrived lines of code to better illustrate:
-
-````
-CGRect f = viewController.view.frame;
-CGFloat minHeight = [viewController minViewHeightForViewStackController:self];
-if(self.frame.size.height < minHeight) {
-	f.size.height = minHeight; //leave your view at it's minimum height
-} else {
-	f.size.height = self.frame.size.height; //stretch your views height to match view stack height
-}
-viewController.frame = f;
-self.contentSize = f.size; //make scrollable
-````
-
 ### Other Utilities
 
 There are a few other utility methods that can be useful at times:

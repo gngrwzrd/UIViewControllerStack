@@ -18,6 +18,7 @@
 		076A75131C2F2D31000F36C8 /* ShortView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 076A75111C2F2D31000F36C8 /* ShortView.xib */; };
 		076A75171C2F2DB9000F36C8 /* TallView.m in Sources */ = {isa = PBXBuildFile; fileRef = 076A75151C2F2DB9000F36C8 /* TallView.m */; };
 		076A75181C2F2DB9000F36C8 /* TallView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 076A75161C2F2DB9000F36C8 /* TallView.xib */; };
+		076A75511C2F9D93000F36C8 /* UIScrollableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 076A75501C2F9D93000F36C8 /* UIScrollableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,8 @@
 		076A75141C2F2DB9000F36C8 /* TallView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TallView.h; sourceTree = "<group>"; };
 		076A75151C2F2DB9000F36C8 /* TallView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TallView.m; sourceTree = "<group>"; };
 		076A75161C2F2DB9000F36C8 /* TallView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TallView.xib; sourceTree = "<group>"; };
+		076A754F1C2F9D93000F36C8 /* UIScrollableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIScrollableViewController.h; path = ../../UIScrollableViewController.h; sourceTree = "<group>"; };
+		076A75501C2F9D93000F36C8 /* UIScrollableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIScrollableViewController.m; path = ../../UIScrollableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +106,8 @@
 		076A750E1C2F2CDD000F36C8 /* UIViewControllerStack */ = {
 			isa = PBXGroup;
 			children = (
+				076A754F1C2F9D93000F36C8 /* UIScrollableViewController.h */,
+				076A75501C2F9D93000F36C8 /* UIScrollableViewController.m */,
 				076A750B1C2F2CDA000F36C8 /* UIViewControllerStack.h */,
 				076A750C1C2F2CDA000F36C8 /* UIViewControllerStack.m */,
 			);
@@ -187,6 +192,7 @@
 				076A75121C2F2D31000F36C8 /* ShortView.m in Sources */,
 				076A750D1C2F2CDA000F36C8 /* UIViewControllerStack.m in Sources */,
 				076A74F71C2F2C62000F36C8 /* AppDelegate.m in Sources */,
+				076A75511C2F9D93000F36C8 /* UIScrollableViewController.m in Sources */,
 				076A74F41C2F2C62000F36C8 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -3,6 +3,11 @@
 
 @class UIViewControllerStack;
 
+//UIViewControllerParentViewStack category - use to get a view controllers parent view stack controller.
+@interface UIViewController (UIViewControllerParentViewStack)
+- (UIViewControllerStack *) parentViewControllerStack;
+@end
+
 //notifications
 extern NSString * const UIViewControllerStackNotificationWillPush;
 extern NSString * const UIViewControllerStackNotificationDidPush;
@@ -39,16 +44,10 @@ typedef NS_ENUM(NSInteger,UIViewControllerStackOperation) {
 //tell the view stack if it should resize your views frame to match the view stack frame
 - (BOOL) shouldResizeFrameForStackPush:(UIViewControllerStack *) viewStack;
 
-//tell the view stack a minimum height for you view
-- (CGFloat) minViewHeightForViewStackController:(UIViewControllerStack *) viewStack;
-
-//tell the view stack if it should become scrollable
-- (BOOL) viewStackShouldBecomeScrollable:(UIViewControllerStack *) viewStack;
-
 @end
 
 IB_DESIGNABLE
-@interface UIViewControllerStack : UIScrollView
+@interface UIViewControllerStack : UIView
 
 //animation duration for push/popping view controllers that slide in / out.
 @property IBInspectable CGFloat animationDuration;
