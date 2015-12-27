@@ -4,8 +4,6 @@ UIViewControllerStack is a stack like data structure for pushing and popping vie
 
 ## UIViewControllerStack Object
 
-You can use UIViewControllerStack in interface builder or setup manually with initWithFrame:.
-
 ### Animation Duration
 
 You can change animation duration in interface builder, or with:
