@@ -85,4 +85,9 @@ IB_DESIGNABLE
 - (UIViewController *) rootViewController;
 - (NSArray *) allViewControllers;
 
+//these are overridable by subclasses - example in UIVIewControllerStackNavBar
+- (CGPoint) startPointForToController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation;
+- (CGPoint) endPointForToController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation;
+- (CGPoint) endPointForFromController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation;
+
 @end

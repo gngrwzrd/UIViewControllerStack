@@ -110,14 +110,12 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 }
 
 - (CGPoint) endPointForFromController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation {
-	CGRect f = viewController.view.frame;
-	
 	if(operation == UIViewControllerStackOperationPush) {
-		return CGPointMake(-(viewController.view.frame.size.width),f.origin.y);
+		return CGPointMake(-(viewController.view.frame.size.width),0);
 	}
 	
 	if(operation == UIViewControllerStackOperationPop) {
-		return CGPointMake(viewController.view.frame.size.width,f.origin.y);
+		return CGPointMake(viewController.view.frame.size.width,0);
 	}
 	
 	return CGPointZero;
@@ -142,7 +140,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	}
 	
 	//add subview
-	[self addSubview:toController.view];
+	[self insertSubview:toController.view atIndex:0];
 	
 	//setup animation options
 	UIViewAnimationOptions options = 0;
@@ -265,7 +263,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 		}
 		
 		//add subview
-		[self addSubview:toController.view];
+		[self insertSubview:toController.view atIndex:0];
 	}
 	
 	//setup animation options

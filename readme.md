@@ -2,6 +2,10 @@
 
 UIViewControllerStack is a stack like data structure for pushing and popping view controllers in and out of view.
 
+It gives you an interface much like UINavigationController, but without the overhead and view management that UINavigationController requires.
+
+It gives you hooks you'd need to setup things like top navigation bars, or bottom tool bars - allowing you to set it up how you like, instead of being constrained to one control.
+
 ## UIViewControllerStack Object
 
 ### Animation Duration
@@ -158,6 +162,7 @@ There are a few other utility methods that can be useful at times:
 - (BOOL) hasViewControllerClass:(Class) cls;
 - (NSInteger) stackSize;
 - (UIViewController *) currentViewController;
+- (UIViewController *) rootViewController;
 - (NSArray *) allViewControllers;
 ````
 
