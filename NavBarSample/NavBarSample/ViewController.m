@@ -21,14 +21,10 @@ static ViewController * _instance;
 	self.viewStack.alwaysResizePushedViews = TRUE;
 	self.navBarStack.alwaysResizePushedViews = TRUE;
 	
+	VC1 * vc1 = [[VC1 alloc] init];
+	[self.viewStack pushViewController:vc1 animated:FALSE];
+	self.firstlayout = TRUE;
 }
 
-- (void) viewDidLayoutSubviews {
-	if(!self.firstlayout) {
-		VC1 * vc1 = [[VC1 alloc] init];
-		[self.viewStack pushViewController:vc1 animated:FALSE];
-		self.firstlayout = TRUE;
-	}
-}
 
 @end
