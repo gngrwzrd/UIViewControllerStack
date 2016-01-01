@@ -50,9 +50,27 @@ IB_DESIGNABLE
 @interface UIViewControllerStack : UIView
 
 //animation duration for push/popping view controllers that slide in / out.
+//default is .25
 @property IBInspectable CGFloat animationDuration;
 
+//the duration to animate views into place when the pan gesture is finished.
+//default is .1
+@property IBInspectable CGFloat finishDragAnimationDuration;
+
+//the amount of pixels to animate left/right when pushing/popping.
+//calculated like yourViewController.view.width/moveAmount;
+//default is 8
+@property IBInspectable NSInteger moveAmount;
+
+//whether to add a gesture recognizer for drag left to right which pops a view controller.
+//default is false.
+@property (nonatomic) IBInspectable BOOL swipeToPop;
+
+//whether to set view.layer.shadow properties when views are being pushed/popped.
+@property IBInspectable BOOL useLayerShadowProperties;
+
 //whether to animate alpha as views are being pushed / popped.
+//this has no effect when using drag gesture to pop a view controller.
 @property IBInspectable BOOL animatesAlpha;
 
 //whether to always resize your views frame to match this view stack's frame.
