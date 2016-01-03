@@ -95,10 +95,9 @@ IB_DESIGNABLE
 //default is .1
 @property IBInspectable CGFloat finishDragAnimationDuration;
 
-//the amount of pixels to animate left/right when pushing/popping.
-//calculated like yourViewController.view.width/moveAmount;
-//default is 8
-@property IBInspectable NSInteger moveAmount;
+//the distance to move view controllers when pushing / popping.
+//the distance your view controller moves is calculated by taking viewController.width/distance.
+@property IBInspectable NSInteger distance;
 
 //whether to add a gesture recognizer for drag left to right which pops a view controller.
 //default is false.

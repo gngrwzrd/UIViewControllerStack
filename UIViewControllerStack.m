@@ -37,7 +37,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 - (void) defaultInit {
 	self.viewControllers = [NSMutableArray array];
 	self.animationDuration = .25;
-	self.moveAmount = 8;
+	self.distance = 8;
 	self.finishDragAnimationDuration = .1;
 	self.animatesAlpha = FALSE;
 	self.swipeToPop = TRUE;
@@ -125,7 +125,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	CGFloat distance = 1;
 	
 	if(useMoveAmount) {
-		update = self.frame.size.width / (currentFrame.size.width / self.moveAmount);
+		update = self.frame.size.width / (currentFrame.size.width / self.distance);
 	}
 	currentFrame.origin.x += delta/update;
 	
@@ -138,14 +138,14 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	current.view.frame = currentFrame;
 	
 	if(self.animatesAlpha) {
-		distance = self.frame.size.width / self.moveAmount;
+		distance = self.frame.size.width / self.distance;
 		fraction = (1 / distance);
 		update = (distance - currentFrame.origin.x) * fraction;
 		current.view.alpha = update;
 	}
 	
 	CGRect popFrame = popController.view.frame;
-	fraction = self.frame.size.width / (popFrame.size.width / self.moveAmount);
+	fraction = self.frame.size.width / (popFrame.size.width / self.distance);
 	update = delta/fraction;
 	popFrame.origin.x += update;
 	popController.view.frame = popFrame;
@@ -313,7 +313,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	}
 	
 	if(operation == UIViewControllerStackOperationPop) {
-		return CGPointMake(-(viewController.view.frame.size.width/self.moveAmount),0);
+		return CGPointMake(-(viewController.view.frame.size.width/self.distance),0);
 	}
 	
 	return CGPointZero;
@@ -338,7 +338,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	}
 	
 	if(operation == UIViewControllerStackOperationPush) {
-		return CGPointMake(-(viewController.view.frame.size.width/self.moveAmount),0);
+		return CGPointMake(-(viewController.view.frame.size.width/self.distance),0);
 	}
 	
 	if(operation == UIViewControllerStackOperationPop) {

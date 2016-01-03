@@ -16,6 +16,20 @@ You can change animation duration in interface builder, or with:
 viewStack.animationDuration = .25;
 ````
 
+### Animation Distance
+
+You can set your view controller to move a fraction of the view stack's width.
+
+````
+viewStack.distance = 8; //(default).
+````
+
+Distance is calculated by taking yourViewController.width / distance.
+
+Distance also controls how much of a view controller you see behind a new view controller being pushed onto the stack.
+
+You can see how this effects animation by setting it to 1, then set it back to 8.
+
 ### Alpha
 
 You can optionally turn on alpha animations with:
@@ -120,9 +134,11 @@ Or you can pick and choose which views to auto resize by implementing the @proto
 - (BOOL) shouldResizeFrameForStackPush:(UIViewControllerStack *) viewStack;
 ````
 
-### Stack update notifications
+### Stack Updates
 
-You can be notified of stack operations that are happening to your view controllers by implementing @protocol UIViewControllerStackUpdating:
+#### @protocol UIViewControllerStackUpdating
+
+Your view controllers can be notified of stack operations by implementing @protocol UIViewControllerStackUpdating:
 
 ````
 - (void) viewStack:(UIViewControllerStack *) viewStack willShowView:(UIViewControllerStackOperation) operation wasAnimated:(BOOL) wasAnimated;
@@ -132,7 +148,7 @@ You can be notified of stack operations that are happening to your view controll
 - (void) viewStack:(UIViewControllerStack *) viewStack didResizeViewController:(UIViewController *) viewController;
 ````
 
-The UIViewControllerStackOperation is defined as:
+#### UIViewControllerStackOperation enum
 
 ````
 typedef NS_ENUM(NSInteger,UIViewControllerStackOperation) {
@@ -141,7 +157,9 @@ typedef NS_ENUM(NSInteger,UIViewControllerStackOperation) {
 };
 ````
 
-There's also traditional NSNotifications available with:
+#### Update Notifications
+
+You can use notifications to receive updates that are happening to the view stack.
 
 ````
 extern NSString * const UIViewControllerStackNotificationWillPush;
@@ -150,6 +168,36 @@ extern NSString * const UIViewControllerStackNotificationWillPop;
 extern NSString * const UIViewControllerStackNotificationDidPop;
 extern NSString * const UIViewControllerStackNotificationUserInfoToControllerKey;
 extern NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey;
+````
+
+#### Update Delegate
+
+The update delegate can be used to receive pop notifications, or override some animation features:
+
+````
+//pop notifications
+- (void) viewStackWillPop:(UIViewControllerStack *) viewStack toController:(UIViewController *) toController fromController:(UIViewController *) fromController wasAnimated:(BOOL) wasAnimated;
+- (void) viewStackDidPop:(UIViewControllerStack *) viewStack toController:(UIViewController *) toController fromController:(UIViewController *) fromController wasAnimated:(BOOL) wasAnimated;
+
+//animation overrides
+- (CGFloat) startXForToController:(UIViewController *) viewController forViewStack:(UIViewControllerStack *) viewStack forOperation:(UIViewControllerStackOperation) operation;
+- (CGFloat) endXForToController:(UIViewController *) viewController forViewStack:(UIViewControllerStack *) viewStack forOperation:(UIViewControllerStackOperation) operation;
+- (CGFloat) endXForFromController:(UIViewController *) viewController forViewStack:(UIViewControllerStack *) viewStack forOperation:(UIViewControllerStackOperation) operation;
+
+//swipe gesture notifications
+- (void) viewStackSwipeGestureWillStart:(UIViewControllerStack *) viewStack;
+- (void) viewStackSwipeGestureDidUpdate:(UIViewControllerStack *) viewStack delta:(CGFloat) delta;
+- (void) viewStackSwipeGestureDidEnd:(UIViewControllerStack *) viewStack didPop:(BOOL) didPop;
+````
+
+### Controlling Animation
+
+There are a few useful methods to manually control animation. You can use these to manually control the swipe gesture animation behavior.
+
+````
+- (void) beginSwipeGestureAnimationUpdates;
+- (void) updateSwipeGestureWithDelta:(CGFloat) delta useMoveAmount:(BOOL) useMoveAmount;
+- (void) endSwipeGestureAnimationUpdatesShouldPop:(BOOL) shouldPop;
 ````
 
 ### Other Utilities
