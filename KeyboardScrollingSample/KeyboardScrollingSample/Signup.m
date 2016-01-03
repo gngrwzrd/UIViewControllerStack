@@ -31,7 +31,7 @@
 	CGRect keyboardFrameEnd = [userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
 	keyboardFrameEnd = [self.view convertRect:keyboardFrameEnd fromView:nil];
 	CGFloat keyboardHeight = keyboardFrameEnd.size.height;
-	self.scrollView.frame = CGRectMake(0,0,self.contentView.frame.size.width,[UIScreen mainScreen].bounds.size.height-keyboardHeight);
+	self.scrollViewBottom.constant = keyboardHeight;
 }
 
 - (IBAction) onSignup:(id) sender {

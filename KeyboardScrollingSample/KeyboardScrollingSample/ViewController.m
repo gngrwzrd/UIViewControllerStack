@@ -11,14 +11,8 @@
 - (void) viewDidLoad {
 	[super viewDidLoad];
 	self.viewStack.alwaysResizePushedViews = TRUE;
-}
-
-- (void) viewDidLayoutSubviews {
-	if(!self.firstload) {
-		self.firstload = true;
-		MainScreen * main = [[MainScreen alloc] init];
-		[self.viewStack pushViewController:main animated:FALSE];
-	}
+	MainScreen * main = [[MainScreen alloc] init];
+	[self.viewStack pushViewController:main animated:FALSE];
 }
 
 @end

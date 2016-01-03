@@ -116,8 +116,8 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 }
 
 - (void) updateSwipeGestureWithDelta:(CGFloat) delta useMoveAmount:(BOOL) useMoveAmount {
-	UIViewController * popController = [self.viewControllers objectAtIndex:(self.viewControllers.count-2)];
 	UIViewController * current = self.currentViewController;
+	UIViewController * popController = [self.viewControllers objectAtIndex:(self.viewControllers.count-2)];
 	
 	CGRect currentFrame = current.view.frame;
 	CGFloat fraction = 1;
@@ -157,8 +157,8 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 
 - (void) endSwipeGestureAnimationUpdatesShouldPop:(BOOL) shouldPop {
 	
-	UIViewController * popController = [self.viewControllers objectAtIndex:(self.viewControllers.count-2)];
 	UIViewController * current = self.currentViewController;
+	UIViewController * popController = [self.viewControllers objectAtIndex:(self.viewControllers.count-2)];
 	UIViewAnimationOptions options = UIViewAnimationOptionCurveEaseInOut;
 	__block CGRect currentFrame = current.view.frame;
 	__block CGRect popFrame = popController.view.frame;
