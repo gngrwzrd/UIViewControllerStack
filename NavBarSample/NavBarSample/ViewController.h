@@ -1,12 +1,11 @@
 
 #import <UIKit/UIKit.h>
 #import "UIViewControllerStack.h"
-#import "UIViewControllerStackNavBar.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController <UIViewControllerStackDelegate>
 
 @property IBOutlet UIViewControllerStack * viewStack;
-@property IBOutlet UIViewControllerStackNavBar * navBarStack;
+@property IBOutlet UIViewControllerStack * navBarStack;
 
 + (ViewController *) instance;
 

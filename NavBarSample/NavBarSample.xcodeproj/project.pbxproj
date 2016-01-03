@@ -25,7 +25,6 @@
 		076A759B1C306D90000F36C8 /* VC2Nav.m in Sources */ = {isa = PBXBuildFile; fileRef = 076A75991C306D90000F36C8 /* VC2Nav.m */; };
 		076A759C1C306D90000F36C8 /* VC2Nav.xib in Resources */ = {isa = PBXBuildFile; fileRef = 076A759A1C306D90000F36C8 /* VC2Nav.xib */; };
 		076A759F1C306DEF000F36C8 /* BaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 076A759E1C306DEF000F36C8 /* BaseVC.m */; };
-		076A75A21C3073FB000F36C8 /* UIViewControllerStackNavBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 076A75A11C3073FB000F36C8 /* UIViewControllerStackNavBar.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,8 +58,6 @@
 		076A759A1C306D90000F36C8 /* VC2Nav.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VC2Nav.xib; sourceTree = "<group>"; };
 		076A759D1C306DEF000F36C8 /* BaseVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseVC.h; sourceTree = "<group>"; };
 		076A759E1C306DEF000F36C8 /* BaseVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseVC.m; sourceTree = "<group>"; };
-		076A75A01C3073FB000F36C8 /* UIViewControllerStackNavBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIViewControllerStackNavBar.h; path = ../../UIViewControllerStackNavBar.h; sourceTree = "<group>"; };
-		076A75A11C3073FB000F36C8 /* UIViewControllerStackNavBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIViewControllerStackNavBar.m; path = ../../UIViewControllerStackNavBar.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,8 +121,6 @@
 				076A757D1C306118000F36C8 /* UIScrollableViewController.m */,
 				076A75791C306114000F36C8 /* UIViewControllerStack.h */,
 				076A757A1C306114000F36C8 /* UIViewControllerStack.m */,
-				076A75A01C3073FB000F36C8 /* UIViewControllerStackNavBar.h */,
-				076A75A11C3073FB000F36C8 /* UIViewControllerStackNavBar.m */,
 			);
 			name = UIViewControllerStack;
 			sourceTree = "<group>";
@@ -232,7 +227,6 @@
 				076A758C1C30690C000F36C8 /* VC1Nav.m in Sources */,
 				076A759F1C306DEF000F36C8 /* BaseVC.m in Sources */,
 				076A757B1C306114000F36C8 /* UIViewControllerStack.m in Sources */,
-				076A75A21C3073FB000F36C8 /* UIViewControllerStackNavBar.m in Sources */,
 				076A75871C3068AD000F36C8 /* VC1.m in Sources */,
 				076A75661C306104000F36C8 /* AppDelegate.m in Sources */,
 				076A75631C306104000F36C8 /* main.m in Sources */,
@@ -343,6 +337,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = NavBarSample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.gngrwzrd.NavBarSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -354,6 +349,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = NavBarSample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.gngrwzrd.NavBarSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";

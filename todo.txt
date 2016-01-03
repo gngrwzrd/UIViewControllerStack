@@ -1,0 +1,1 @@
+finish pan stuff with navbar and delegate methods.

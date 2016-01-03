@@ -5,7 +5,6 @@
 static ViewController * _instance;
 
 @interface ViewController ()
-@property BOOL firstlayout;
 @end
 
 @implementation ViewController
@@ -18,13 +17,73 @@ static ViewController * _instance;
 	[super viewDidLoad];
 	_instance = self;
 	
+	self.viewStack.useLayerShadowProperties = FALSE;
 	self.viewStack.alwaysResizePushedViews = TRUE;
+	self.viewStack.delegate = self;
+	
+	self.navBarStack.useLayerShadowProperties = FALSE;
 	self.navBarStack.alwaysResizePushedViews = TRUE;
+	self.navBarStack.delegate = self;
+	self.navBarStack.animatesAlpha = TRUE;
+	self.navBarStack.swipeToPop = FALSE;
 	
 	VC1 * vc1 = [[VC1 alloc] init];
 	[self.viewStack pushViewController:vc1 animated:FALSE];
-	self.firstlayout = TRUE;
 }
 
+- (void) viewStackWillPop:(UIViewControllerStack *)viewStack toController:(UIViewController *)toController fromController:(UIViewController *)fromController wasAnimated:(BOOL) wasAnimated {
+	
+	if(viewStack == self.viewStack) {
+		[self.navBarStack popViewControllerAnimated:wasAnimated];
+	}
+}
+
+- (void) viewStackSwipeGestureWillStart:(UIViewControllerStack *)viewStack {
+	if(viewStack == self.viewStack) {
+		[self.navBarStack beginSwipeGestureAnimationUpdates];
+	}
+}
+
+- (void) viewStackSwipeGestureDidUpdate:(UIViewControllerStack *)viewStack delta:(CGFloat)delta {
+	if(viewStack == self.viewStack) {
+		[self.navBarStack updateSwipeGestureWithDelta:delta useMoveAmount:TRUE];
+	}
+}
+
+- (void) viewStackSwipeGestureDidEnd:(UIViewControllerStack *)viewStack didPop:(BOOL)didPop {
+	if(viewStack == self.viewStack) {
+		[self.navBarStack endSwipeGestureAnimationUpdatesShouldPop:didPop];
+	}
+}
+
+- (CGFloat) startXForToController:(UIViewController *)viewController forViewStack:(UIViewControllerStack *)viewStack forOperation:(UIViewControllerStackOperation)operation {
+	
+	if(viewStack == self.navBarStack) {
+		if(operation == UIViewControllerStackOperationPush) {
+			return viewController.view.frame.size.width/6;
+		}
+		
+		if(operation == UIViewControllerStackOperationPop) {
+			return -(viewController.view.frame.size.width/6);
+		}
+	}
+	
+	return CGFLOAT_MAX;
+}
+
+- (CGFloat) endXForFromController:(UIViewController *)viewController forViewStack:(UIViewControllerStack *)viewStack forOperation:(UIViewControllerStackOperation)operation {
+	
+	if(viewStack == self.navBarStack) {
+		if(operation == UIViewControllerStackOperationPush) {
+			return -(viewController.view.frame.size.width/6);
+		}
+		
+		if(operation == UIViewControllerStackOperationPop) {
+			return viewController.view.frame.size.width/6;
+		}
+	}
+	
+	return CGFLOAT_MAX;
+}
 
 @end

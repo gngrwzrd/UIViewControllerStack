@@ -1,6 +1,7 @@
 
 #import "UIViewControllerStack.h"
 
+//notifications
 NSString * const UIViewControllerStackNotificationWillPush = @"UIViewControllerStackNotificationWillPush";
 NSString * const UIViewControllerStackNotificationDidPush = @"UIViewControllerStackNotificationDidPush";
 NSString * const UIViewControllerStackNotificationWillPop = @"UIViewControllerStackNotificationWillPop";
@@ -10,7 +11,6 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 
 //UIViewControllerParentViewStack addition
 @implementation UIViewController (UIViewControllerParentViewStack)
-
 - (UIViewControllerStack *) parentViewControllerStack; {
 	UIView * superview = self.view.superview;
 	NSInteger count = 20;
@@ -25,17 +25,11 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 }
 @end
 
-//UIViewControllerStackPanGesture
-@interface UIViewControllerStackPanGesture : UIPanGestureRecognizer
-@end
-@implementation UIViewControllerStackPanGesture
-@end
-
 //UIViewControllerStack
 @interface UIViewControllerStack ()
 @property NSMutableArray * viewControllers;
 @property CGPoint swipeLocation;
-@property UIViewControllerStackPanGesture * panGesture;
+@property UIPanGestureRecognizer * panGesture;
 @end
 
 @implementation UIViewControllerStack
@@ -94,7 +88,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 
 - (void) addPanGestureRecognizer {
 	if(!self.panGesture) {
-		self.panGesture = [[UIViewControllerStackPanGesture alloc] initWithTarget:self action:@selector(onPan:)];
+		self.panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPan:)];
 	}
 	[self removeGestureRecognizer:self.panGesture];
 	[self addGestureRecognizer:self.panGesture];
@@ -117,82 +111,159 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	viewController.view.layer.shadowOpacity = .3;
 }
 
+- (void) beginSwipeGestureAnimationUpdates {
+	[self panGestureStart:nil];
+}
+
+- (void) updateSwipeGestureWithDelta:(CGFloat) delta useMoveAmount:(BOOL) useMoveAmount {
+	UIViewController * popController = [self.viewControllers objectAtIndex:(self.viewControllers.count-2)];
+	UIViewController * current = self.currentViewController;
+	
+	CGRect currentFrame = current.view.frame;
+	CGFloat fraction = 1;
+	CGFloat update = 1;
+	CGFloat distance = 1;
+	
+	if(useMoveAmount) {
+		update = self.frame.size.width / (currentFrame.size.width / self.moveAmount);
+	}
+	currentFrame.origin.x += delta/update;
+	
+	if(currentFrame.origin.x < 0) {
+		currentFrame.origin.x = 0;
+		current.view.frame = currentFrame;
+		return;
+	}
+	
+	current.view.frame = currentFrame;
+	
+	if(self.animatesAlpha) {
+		distance = self.frame.size.width / self.moveAmount;
+		fraction = (1 / distance);
+		update = (distance - currentFrame.origin.x) * fraction;
+		current.view.alpha = update;
+	}
+	
+	CGRect popFrame = popController.view.frame;
+	fraction = self.frame.size.width / (popFrame.size.width / self.moveAmount);
+	update = delta/fraction;
+	popFrame.origin.x += update;
+	popController.view.frame = popFrame;
+	
+	if(self.animatesAlpha) {
+		popController.view.alpha = (1 / self.frame.size.width) * currentFrame.origin.x;
+	}
+}
+
+- (void) endSwipeGestureAnimationUpdatesShouldPop:(BOOL) shouldPop {
+	
+	UIViewController * popController = [self.viewControllers objectAtIndex:(self.viewControllers.count-2)];
+	UIViewController * current = self.currentViewController;
+	UIViewAnimationOptions options = UIViewAnimationOptionCurveEaseInOut;
+	__block CGRect currentFrame = current.view.frame;
+	__block CGRect popFrame = popController.view.frame;
+	
+	if(!shouldPop) {
+		
+		if([self.delegate respondsToSelector:@selector(viewStackSwipeGestureDidEnd:didPop:)]) {
+			[self.delegate viewStackSwipeGestureDidEnd:self didPop:FALSE];
+		}
+		
+		[UIView animateWithDuration:self.finishDragAnimationDuration delay:0 options:options animations:^{
+			
+			currentFrame.origin.x = 0;
+			current.view.frame = currentFrame;
+			current.view.alpha = 1;
+			popFrame.origin = [self endPointForFromController:popController forOperation:UIViewControllerStackOperationPush];
+			popController.view.frame = popFrame;
+			popController.view.alpha = 1;
+			
+		} completion:^(BOOL finished) {
+			
+			[self removeShadowsForViewController:current];
+			
+		}];
+		
+	} else {
+		
+		if([self.delegate respondsToSelector:@selector(viewStackSwipeGestureDidEnd:didPop:)]) {
+			[self.delegate viewStackSwipeGestureDidEnd:self didPop:TRUE];
+		}
+		
+		[UIView animateWithDuration:self.finishDragAnimationDuration delay:0 options:options animations:^{
+			
+			if(self.animatesAlpha) {
+				current.view.alpha = 0;
+				popController.view.alpha = 1;
+			}
+			
+			currentFrame.origin = [self endPointForFromController:current forOperation:UIViewControllerStackOperationPop];
+			current.view.frame = currentFrame;
+			popFrame.origin = [self endPointForToController:popController forOperation:UIViewControllerStackOperationPop];
+			popController.view.frame = popFrame;
+			
+		} completion:^(BOOL finished) {
+			
+			UIViewController * current = [self currentViewControllerByRemovingLastObject];
+			[self removeShadowsForViewController:current];
+			[current.view removeFromSuperview];
+			
+		}];
+	}
+}
+
+- (void) panGestureStart:(UIPanGestureRecognizer *) pan {
+	UIViewController * popController = [self.viewControllers objectAtIndex:(self.viewControllers.count-2)];
+	UIViewController * current = self.currentViewController;
+	if([self.delegate respondsToSelector:@selector(viewStackSwipeGestureWillStart:)]) {
+		[self.delegate viewStackSwipeGestureWillStart:self];
+	}
+	[self addShadowForViewController:current];
+	if(pan) {
+		self.swipeLocation = [pan locationInView:self];
+	}
+	CGRect popFrame = popController.view.frame;
+	popFrame.origin = [self startPointForToController:popController forOperation:UIViewControllerStackOperationPop];
+	popController.view.frame = popFrame;
+	[self insertSubview:popController.view atIndex:0];
+}
+
+- (void) panGestureUpdate:(UIPanGestureRecognizer *) pan {
+	CGPoint location = [pan locationInView:self];
+	CGFloat diff = location.x - self.swipeLocation.x;
+	if([self.delegate respondsToSelector:@selector(viewStackSwipeGestureDidUpdate:delta:)]) {
+		[self.delegate viewStackSwipeGestureDidUpdate:self delta:diff];
+	}
+	[self updateSwipeGestureWithDelta:diff useMoveAmount:FALSE];
+	self.swipeLocation = location;
+}
+
+- (void) panGestureEnd:(UIPanGestureRecognizer *) pan {
+	UIViewController * current = self.currentViewController;
+	__block CGRect currentFrame = current.view.frame;
+	self.swipeLocation = CGPointZero;
+	if(currentFrame.origin.x < self.frame.size.width/2) {
+		[self endSwipeGestureAnimationUpdatesShouldPop:FALSE];
+	} else {
+		[self endSwipeGestureAnimationUpdatesShouldPop:TRUE];
+	}
+}
+
 - (void) onPan:(UIPanGestureRecognizer *) pan {
-	//limit panning if not enough view controllers.
 	if(self.viewControllers.count < 2) {
 		return;
 	}
 	
-	UIViewController * popController = [self.viewControllers objectAtIndex:(self.viewControllers.count-2)];
-	UIViewController * current = self.currentViewController;
-	
 	if(pan.state == UIGestureRecognizerStateBegan) {
-		[self addShadowForViewController:current];
-		self.swipeLocation = [pan locationInView:self];
-		CGRect popFrame = popController.view.frame;
-		popFrame.origin = [self startPointForToController:popController forOperation:UIViewControllerStackOperationPop];
-		popController.view.frame = popFrame;
-		[self insertSubview:popController.view atIndex:0];
+		[self panGestureStart:pan];
 	}
 	
 	else if(pan.state == UIGestureRecognizerStateChanged) {
-		CGPoint location = [pan locationInView:self];
-		CGFloat diff = location.x - self.swipeLocation.x;
-		
-		CGRect currentFrame = current.view.frame;
-		currentFrame.origin.x += diff;
-		current.view.frame = currentFrame;
-		
-		if(currentFrame.origin.x < 0) { 
-			currentFrame.origin.x = 0;
-			current.view.frame = currentFrame;
-			return;
-		}
-		
-		CGRect popFrame = popController.view.frame;
-		CGFloat fraction = self.frame.size.width / (popController.view.frame.size.width / self.moveAmount);
-		CGFloat update = diff/fraction;
-		popFrame.origin.x += update;
-		popController.view.frame = popFrame;
-		
-		self.swipeLocation = location;
+		[self panGestureUpdate:pan];
 	}
 	
 	else if(pan.state == UIGestureRecognizerStateEnded) {
-		
-		self.swipeLocation = CGPointZero;
-		
-		__block CGRect currentFrame = current.view.frame;
-		__block CGRect popFrame = popController.view.frame;
-		UIViewAnimationOptions options = UIViewAnimationOptionCurveEaseInOut;
-		
-		if(currentFrame.origin.x < self.frame.size.width/2) {
-			
-			[UIView animateWithDuration:self.finishDragAnimationDuration delay:0 options:options animations:^{
-				currentFrame.origin.x = 0;
-				current.view.frame = currentFrame;
-				popFrame.origin = [self endPointForFromController:popController forOperation:UIViewControllerStackOperationPush];
-				popController.view.frame = popFrame;
-			} completion:^(BOOL finished) {
-				[self removeShadowsForViewController:current];
-			}];
-			
-		} else {
-			
-			[UIView animateWithDuration:self.finishDragAnimationDuration delay:0 options:options animations:^{
-				CGRect newRect;
-				newRect.origin = [self endPointForFromController:current forOperation:UIViewControllerStackOperationPop];
-				newRect.size = currentFrame.size;
-				current.view.frame = newRect;
-				newRect.origin = [self endPointForToController:popController forOperation:UIViewControllerStackOperationPop];
-				newRect.size = popFrame.size;
-				popController.view.frame = newRect;
-			} completion:^(BOOL finished) {
-				UIViewController * current = [self currentViewControllerByRemovingLastObject];
-				[self removeShadowsForViewController:current];
-				[current.view removeFromSuperview];
-			}];
-		}
+		[self panGestureEnd:pan];
 	}
 }
 
@@ -230,6 +301,13 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 }
 
 - (CGPoint) startPointForToController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation {
+	if([self.delegate respondsToSelector:@selector(startXForToController:forViewStack:forOperation:)]) {
+		CGFloat x = [self.delegate startXForToController:viewController forViewStack:self forOperation:operation];
+		if(x != CGFLOAT_MAX) {
+			return CGPointMake(x,0);
+		}
+	}
+	
 	if(operation == UIViewControllerStackOperationPush) {
 		return CGPointMake(self.frame.size.width,0);
 	}
@@ -242,10 +320,23 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 }
 
 - (CGPoint) endPointForToController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation {
+	if([self.delegate respondsToSelector:@selector(endXForToController:forViewStack:forOperation:)]) {
+		CGFloat x = [self.delegate endXForToController:viewController forViewStack:self forOperation:operation];
+		if(x != CGFLOAT_MAX) {
+			return CGPointMake(x,0);
+		}
+	}
 	return CGPointMake(0,0);
 }
 
 - (CGPoint) endPointForFromController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation {
+	if([self.delegate respondsToSelector:@selector(endXForFromController:forViewStack:forOperation:)]) {
+		CGFloat x = [self.delegate endXForFromController:viewController forViewStack:self forOperation:operation];
+		if(x != CGFLOAT_MAX) {
+			return CGPointMake(x,0);
+		}
+	}
+	
 	if(operation == UIViewControllerStackOperationPush) {
 		return CGPointMake(-(viewController.view.frame.size.width/self.moveAmount),0);
 	}
@@ -370,10 +461,8 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 			}
 		}
 		
-		if(toController) {
-			if([toController respondsToSelector:@selector(viewStack:didShowView:wasAnimated:)]) {
-				[toControllerUpdating viewStack:self didShowView:UIViewControllerStackOperationPush wasAnimated:(duration>0)];
-			}
+		if([toController respondsToSelector:@selector(viewStack:didShowView:wasAnimated:)]) {
+			[toControllerUpdating viewStack:self didShowView:UIViewControllerStackOperationPush wasAnimated:(duration>0)];
 		}
 		
 		[self removeShadowsForViewController:toController];
@@ -435,6 +524,10 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	//using UIView animation with a duration of 0 has a slight noticeable movement.
 	if(duration == 0) {
 		
+		if([self.delegate respondsToSelector:@selector(viewStackWillPop:toController:fromController:wasAnimated:)]) {
+			[self.delegate viewStackWillPop:self toController:toController fromController:fromController wasAnimated:FALSE];
+		}
+		
 		CGRect f;
 		
 		if(fromController) {
@@ -458,12 +551,20 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 			}
 		}
 		
+		if([self.delegate respondsToSelector:@selector(viewStackDidPop:toController:fromController:wasAnimated:)]) {
+			[self.delegate viewStackDidPop:self toController:toController fromController:fromController wasAnimated:FALSE];
+		}
+		
 		[[NSNotificationCenter defaultCenter] postNotificationName:UIViewControllerStackNotificationDidPop object:self userInfo:userInfo];
 		
 		return;
 	}
 	
 	[self addShadowForViewController:fromController];
+	
+	if([self.delegate respondsToSelector:@selector(viewStackWillPop:toController:fromController:wasAnimated:)]) {
+		[self.delegate viewStackWillPop:self toController:toController fromController:fromController wasAnimated:TRUE];
+	}
 	
 	//trigger animation, moving popped off to right, next view controller in from the left
 	[UIView animateWithDuration:duration delay:0 options:options animations:^{
@@ -499,13 +600,15 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 			}
 		}
 		
-		if(toController) {
-			if([toController respondsToSelector:@selector(viewStack:didShowView:wasAnimated:)]) {
-				[toControllerUpdating viewStack:self didShowView:UIViewControllerStackOperationPop wasAnimated:(duration>0)];
-			}
+		if([toController respondsToSelector:@selector(viewStack:didShowView:wasAnimated:)]) {
+			[toControllerUpdating viewStack:self didShowView:UIViewControllerStackOperationPop wasAnimated:(duration>0)];
 		}
 		
 		[self removeShadowsForViewController:fromController];
+		
+		if([self.delegate respondsToSelector:@selector(viewStackDidPop:toController:fromController:wasAnimated:)]) {
+			[self.delegate viewStackDidPop:self toController:toController fromController:fromController wasAnimated:TRUE];
+		}
 		
 		[[NSNotificationCenter defaultCenter] postNotificationName:UIViewControllerStackNotificationDidPop object:self userInfo:userInfo];
 	}];
@@ -541,6 +644,9 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 }
 
 - (void) popViewControllerAnimated:(BOOL) animated; {
+	if(self.viewControllers.count == 1) {
+		return;
+	}
 	UIViewController * current = [self currentViewControllerByRemovingLastObject];
 	UIViewController * nxt = [self currentViewController];
 	float duration = 0;

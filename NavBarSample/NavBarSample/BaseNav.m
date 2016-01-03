@@ -16,7 +16,6 @@
 
 - (IBAction) onPop:(id) sender {
 	[[ViewController instance].viewStack popViewControllerAnimated:TRUE];
-	[[ViewController instance].navBarStack popViewControllerAnimated:TRUE];
 }
 
 @end

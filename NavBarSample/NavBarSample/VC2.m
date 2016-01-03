@@ -12,7 +12,7 @@
 - (void) viewStack:(UIViewControllerStack *)viewStack willShowView:(UIViewControllerStackOperation)operation wasAnimated:(BOOL)wasAnimated {
 	if(operation == UIViewControllerStackOperationPush) {
 		VC2Nav * nav = [[VC2Nav alloc] init];
-		[[ViewController instance].navBarStack pushViewController:nav animated:true];
+		[[ViewController instance].navBarStack pushViewController:nav animated:wasAnimated];
 	}
 }
 

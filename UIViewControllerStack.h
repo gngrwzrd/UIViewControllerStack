@@ -3,7 +3,8 @@
 
 @class UIViewControllerStack;
 
-//UIViewControllerParentViewStack category - use to get a view controllers parent view stack controller.
+//UIViewControllerParentViewStack category.
+//use to get a view controllers parent view stack controller.
 @interface UIViewController (UIViewControllerParentViewStack)
 - (UIViewControllerStack *) parentViewControllerStack;
 @end
@@ -22,7 +23,8 @@ typedef NS_ENUM(NSInteger,UIViewControllerStackOperation) {
 	UIViewControllerStackOperationPop
 };
 
-//protocol to notify view controllers of updates
+//protocol to notify your view controllers of updates
+//you implement these on your view controllers that you push/pop.
 @protocol UIViewControllerStackUpdating <NSObject>
 @optional
 
@@ -46,14 +48,50 @@ typedef NS_ENUM(NSInteger,UIViewControllerStackOperation) {
 
 @end
 
+//protocol to control and be updated of animation and swipe gesture.
+@protocol UIViewControllerStackDelegate <NSObject>
+@optional
+
+//called before / after a pop
+- (void) viewStackWillPop:(UIViewControllerStack *) viewStack toController:(UIViewController *) toController fromController:(UIViewController *) fromController wasAnimated:(BOOL) wasAnimated;
+- (void) viewStackDidPop:(UIViewControllerStack *) viewStack toController:(UIViewController *) toController fromController:(UIViewController *) fromController wasAnimated:(BOOL) wasAnimated;
+
+//override the start X postition for to controller.
+//for UIViewControllerStackOperationPush, the default value is viewController.frame.size.width
+//for UIViewControllerStackOperatoinPop, the default value is -(viewController.view.frame.size.width/viewStack.moveAmount)
+- (CGFloat) startXForToController:(UIViewController *) viewController forViewStack:(UIViewControllerStack *) viewStack forOperation:(UIViewControllerStackOperation) operation;
+
+//override the end X position for to controller.
+//default value is 0 for both UIViewControllerStackOperationPush, and UIViewControllerStackOperationPop
+- (CGFloat) endXForToController:(UIViewController *) viewController forViewStack:(UIViewControllerStack *) viewStack forOperation:(UIViewControllerStackOperation) operation;
+
+//override the end X position for from controller.
+//for UIViewControllerStackOperatoinPush, the default value is -(viewController.view.frame.size.width/viewStack.moveAmount)
+//for UIViewControllerStackOperationPop, the default value is viewController.frame.size.width
+- (CGFloat) endXForFromController:(UIViewController *) viewController forViewStack:(UIViewControllerStack *) viewStack forOperation:(UIViewControllerStackOperation) operation;
+
+//called when the view stack is starting a swipe gesture
+- (void) viewStackSwipeGestureWillStart:(UIViewControllerStack *) viewStack;
+
+//called on your view controller during drag/swipe operations for popping.
+- (void) viewStackSwipeGestureDidUpdate:(UIViewControllerStack *) viewStack delta:(CGFloat) delta;
+
+//called when the view stack is done dragging.
+- (void) viewStackSwipeGestureDidEnd:(UIViewControllerStack *) viewStack didPop:(BOOL) didPop;
+
+@end
+
 IB_DESIGNABLE
 @interface UIViewControllerStack : UIView
+
+//delegate
+@property (weak) NSObject <UIViewControllerStackDelegate> * delegate;
 
 //animation duration for push/popping view controllers that slide in / out.
 //default is .25
 @property IBInspectable CGFloat animationDuration;
 
-//the duration to animate views into place when the pan gesture is finished.
+//the duration to animate views into place when the swipe gesture is finished.
 //default is .1
 @property IBInspectable CGFloat finishDragAnimationDuration;
 
@@ -103,9 +141,14 @@ IB_DESIGNABLE
 - (UIViewController *) rootViewController;
 - (NSArray *) allViewControllers;
 
-//these are overridable by subclasses - example in UIVIewControllerStackNavBar
+//these are overridable by subclasses, or you can implement UIViewControllerStackDelegate instead.
 - (CGPoint) startPointForToController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation;
 - (CGPoint) endPointForToController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation;
 - (CGPoint) endPointForFromController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation;
+
+// these are some utils to manually animate a pop operation. see NavBarSample for example.
+- (void) beginSwipeGestureAnimationUpdates;
+- (void) updateSwipeGestureWithDelta:(CGFloat) delta useMoveAmount:(BOOL) useMoveAmount;
+- (void) endSwipeGestureAnimationUpdatesShouldPop:(BOOL) shouldPop;
 
 @end
