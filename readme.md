@@ -24,9 +24,7 @@ You can set your view controller to move a fraction of the view stack's width.
 viewStack.distance = 8; //(default).
 ````
 
-Distance is calculated by taking yourViewController.width / distance.
-
-Distance also controls how much of a view controller you see behind a new view controller being pushed onto the stack.
+Distance controls how much of a view controller you see behind a new view controller being pushed onto the stack.
 
 You can see how this effects animation by setting it to 1, then set it back to 8.
 
