@@ -16,6 +16,11 @@
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xxM-8g-Rgd" customClass="UIViewControllerStack">
+                    <rect key="frame" x="0.0" y="79" width="600" height="521"/>
+                    <animations/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2b4-Hx-DHv" customClass="UIViewControllerStack">
                     <rect key="frame" x="0.0" y="0.0" width="600" height="80"/>
                     <animations/>
@@ -23,11 +28,6 @@
                     <constraints>
                         <constraint firstAttribute="height" constant="80" id="APJ-0N-QBi"/>
                     </constraints>
-                </view>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xxM-8g-Rgd" customClass="UIViewControllerStack">
-                    <rect key="frame" x="0.0" y="79" width="600" height="521"/>
-                    <animations/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 </view>
             </subviews>
             <animations/>

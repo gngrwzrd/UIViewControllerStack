@@ -23,7 +23,7 @@ static ViewController * _instance;
 	UIColor * color = [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1];
 	self.navColor = color;
 	
-	self.viewStack.useLayerShadowProperties = FALSE;
+	//self.viewStack.useLayerShadowProperties = FALSE;
 	self.viewStack.alwaysResizePushedViews = TRUE;
 	self.viewStack.delegate = self;
 	
