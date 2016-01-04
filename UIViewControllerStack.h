@@ -95,7 +95,7 @@ IB_DESIGNABLE
 //the distance your view controller moves is calculated by taking viewController.width/distance.
 @property IBInspectable CGFloat distance;
 
-//whether to add a gesture recognizer for drag left to right which pops a view controller.
+//whether to add a gesture recognizer for sipe left to right which pops a view controller.
 //default is false.
 @property (nonatomic) IBInspectable BOOL swipeToPop;
 
