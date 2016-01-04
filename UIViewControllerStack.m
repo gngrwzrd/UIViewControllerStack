@@ -176,6 +176,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 		} completion:^(BOOL finished) {
 			
 			[self removeShadowsForViewController:current];
+			[popController.view removeFromSuperview];
 			
 		}];
 		
