@@ -91,10 +91,6 @@ IB_DESIGNABLE
 //default is .25
 @property IBInspectable CGFloat animationDuration;
 
-//the duration to animate views into place when the swipe gesture is finished.
-//default is .1
-@property IBInspectable CGFloat finishDragAnimationDuration;
-
 //the distance to move view controllers when pushing / popping.
 //the distance your view controller moves is calculated by taking viewController.width/distance.
 @property IBInspectable CGFloat distance;

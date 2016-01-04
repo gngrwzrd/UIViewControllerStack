@@ -40,7 +40,6 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	
 	//TODO: fix animation when distance is 1
 	self.distance = .25;
-	self.finishDragAnimationDuration = .1;
 	self.animatesAlpha = FALSE;
 	self.swipeToPop = TRUE;
 	self.useLayerShadowProperties = TRUE;
@@ -167,7 +166,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 			[self.delegate viewStackSwipeGestureDidEnd:self didPop:FALSE];
 		}
 		
-		[UIView animateWithDuration:self.finishDragAnimationDuration delay:0 options:options animations:^{
+		[UIView animateWithDuration:self.animationDuration delay:0 options:options animations:^{
 			
 			currentFrame.origin.x = 0;
 			current.view.frame = currentFrame;
@@ -188,7 +187,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 			[self.delegate viewStackSwipeGestureDidEnd:self didPop:TRUE];
 		}
 		
-		[UIView animateWithDuration:self.finishDragAnimationDuration delay:0 options:options animations:^{
+		[UIView animateWithDuration:self.animationDuration delay:0 options:options animations:^{
 			
 			if(self.animatesAlpha) {
 				current.view.alpha = 0;
