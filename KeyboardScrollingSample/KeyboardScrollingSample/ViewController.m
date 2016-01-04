@@ -10,7 +10,7 @@
 
 - (void) viewDidLoad {
 	[super viewDidLoad];
-	self.viewStack.alwaysResizePushedViews = TRUE;
+	self.viewStack.resizeViews = TRUE;
 	MainScreen * main = [[MainScreen alloc] init];
 	[self.viewStack pushViewController:main animated:FALSE];
 }

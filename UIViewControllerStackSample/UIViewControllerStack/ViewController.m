@@ -9,7 +9,7 @@
 
 - (void) viewDidLoad {
 	[super viewDidLoad];
-	self.viewStack.alwaysResizePushedViews = TRUE;
+	self.viewStack.resizeViews = TRUE;
 	VC * vc = [[VC alloc] init];
 	[self.viewStack pushViewController:vc animated:FALSE];
 }
