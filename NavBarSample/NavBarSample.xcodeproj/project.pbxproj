@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		074404521C3A4A56000B36AB /* TODO.txt in Resources */ = {isa = PBXBuildFile; fileRef = 074404511C3A4A56000B36AB /* TODO.txt */; };
 		076A75631C306104000F36C8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 076A75621C306104000F36C8 /* main.m */; };
 		076A75661C306104000F36C8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 076A75651C306104000F36C8 /* AppDelegate.m */; };
 		076A75691C306104000F36C8 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 076A75681C306104000F36C8 /* ViewController.m */; };
@@ -22,7 +21,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		074404511C3A4A56000B36AB /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO.txt; sourceTree = "<group>"; };
 		076A755E1C306104000F36C8 /* NavBarSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NavBarSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		076A75621C306104000F36C8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		076A75641C306104000F36C8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -57,7 +55,6 @@
 		076A75551C306104000F36C8 = {
 			isa = PBXGroup;
 			children = (
-				074404511C3A4A56000B36AB /* TODO.txt */,
 				076A75601C306104000F36C8 /* NavBarSample */,
 				076A75611C306104000F36C8 /* Supporting Files */,
 				076A755F1C306104000F36C8 /* Products */,
@@ -171,7 +168,6 @@
 			files = (
 				076A75711C306104000F36C8 /* LaunchScreen.storyboard in Resources */,
 				076A75831C30624F000F36C8 /* ViewController.xib in Resources */,
-				074404521C3A4A56000B36AB /* TODO.txt in Resources */,
 				076A758D1C30690C000F36C8 /* VC1Nav.xib in Resources */,
 				076A75881C3068AD000F36C8 /* VC1.xib in Resources */,
 				076A756E1C306104000F36C8 /* Assets.xcassets in Resources */,
