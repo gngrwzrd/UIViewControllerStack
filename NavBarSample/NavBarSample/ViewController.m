@@ -23,16 +23,15 @@ static ViewController * _instance;
 	UIColor * color = [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1];
 	self.navColor = color;
 	
-	//self.viewStack.useLayerShadowProperties = FALSE;
 	self.viewStack.alwaysResizePushedViews = TRUE;
 	self.viewStack.delegate = self;
 	
 	self.navBarStack.backgroundColor = self.navColor;
+	self.navBarStack.swipeToPop = FALSE;
 	self.navBarStack.useLayerShadowProperties = FALSE;
 	self.navBarStack.alwaysResizePushedViews = TRUE;
-	self.navBarStack.delegate = self;
 	self.navBarStack.animatesAlpha = TRUE;
-	self.navBarStack.swipeToPop = FALSE;
+	self.navBarStack.delegate = self;
 	
 	VC1 * vc1 = [[VC1 alloc] init];
 	[self.viewStack pushViewController:vc1 animated:FALSE];
