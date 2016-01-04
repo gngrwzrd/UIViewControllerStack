@@ -126,7 +126,7 @@ When your view controllers are becoming the visible view, whether from a push or
 You can control this behavior globally with:
 
 ````
-viewStack.alwaysResizePushedViews = TRUE;
+viewStack.resizeViews = TRUE;
 ````
 
 Or you can pick and choose which views to auto resize by implementing the @protocol UIViewControllerStackUpdated and the method:
@@ -149,7 +149,7 @@ Your view controllers can be notified of stack operations by implementing @proto
 - (void) viewStack:(UIViewControllerStack *) viewStack didResizeViewController:(UIViewController *) viewController;
 ````
 
-#### UIViewControllerStackOperation enum
+#### enum UIViewControllerStackOperation
 
 ````
 typedef NS_ENUM(NSInteger,UIViewControllerStackOperation) {
@@ -171,9 +171,9 @@ extern NSString * const UIViewControllerStackNotificationUserInfoToControllerKey
 extern NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey;
 ````
 
-#### Update Delegate
+#### @protocol UIViewControllerStackDelegate
 
-The update delegate can be used to receive pop notifications, or override some animation features:
+The delegate can be used to receive pop notifications, or override some animation features:
 
 ````
 //pop notifications

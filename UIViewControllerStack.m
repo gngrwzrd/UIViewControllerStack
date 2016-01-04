@@ -36,13 +36,11 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 
 - (void) defaultInit {
 	self.viewControllers = [NSMutableArray array];
-	self.animationDuration = .25;
-	
-	//TODO: fix animation when distance is 1
+	self.duration = .25;
 	self.distance = .25;
 	self.animatesAlpha = FALSE;
 	self.swipeToPop = TRUE;
-	self.useLayerShadowProperties = TRUE;
+	self.useShadows = TRUE;
 }
 
 - (id) init {
@@ -103,7 +101,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 }
 
 - (void) addShadowForViewController:(UIViewController *) viewController {
-	if(!self.useLayerShadowProperties) {
+	if(!self.useShadows) {
 		return;
 	}
 	viewController.view.layer.shadowOffset = CGSizeMake(0, 0);
@@ -166,7 +164,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 			[self.delegate viewStackSwipeGestureDidEnd:self didPop:FALSE];
 		}
 		
-		[UIView animateWithDuration:self.animationDuration delay:0 options:options animations:^{
+		[UIView animateWithDuration:self.duration delay:0 options:options animations:^{
 			
 			currentFrame.origin.x = 0;
 			current.view.frame = currentFrame;
@@ -187,7 +185,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 			[self.delegate viewStackSwipeGestureDidEnd:self didPop:TRUE];
 		}
 		
-		[UIView animateWithDuration:self.animationDuration delay:0 options:options animations:^{
+		[UIView animateWithDuration:self.duration delay:0 options:options animations:^{
 			
 			if(self.animatesAlpha) {
 				current.view.alpha = 0;
@@ -273,7 +271,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	CGRect f = viewController.view.frame;
 	UIViewController <UIViewControllerStackUpdating> * updating = (UIViewController <UIViewControllerStackUpdating> *) viewController;
 	
-	if(self.alwaysResizePushedViews) {
+	if(self.resizeViews) {
 		f.size.width = self.frame.size.width;
 		f.size.height = self.frame.size.height;
 		updatedFrame = TRUE;
@@ -614,7 +612,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 - (void) pushViewController:(UIViewController *) viewController animated:(BOOL) animated; {
 	float duration = 0;
 	if(animated) {
-		duration = self.animationDuration;
+		duration = self.duration;
 	}
 	
 	UIViewController * current = [self currentViewController];
@@ -627,13 +625,9 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	[self.viewControllers addObjectsFromArray:viewControllers];
 	float duration = 0;
 	if(animated) {
-		duration = self.animationDuration;
+		duration = self.duration;
 	}
 	[self pushFromController:current toController:self.viewControllers.lastObject withDuration:duration];
-}
-
-- (void) pushViewControllers:(NSArray *) viewControllers; {
-	[self.viewControllers addObjectsFromArray:viewControllers];
 }
 
 - (void) insertViewController:(UIViewController *) viewController atIndex:(NSInteger) index; {
@@ -648,7 +642,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	UIViewController * nxt = [self currentViewController];
 	float duration = 0;
 	if(animated) {
-		duration = self.animationDuration;
+		duration = self.duration;
 	}
 	[self popFromController:current toController:nxt withDuration:duration];
 }
@@ -658,7 +652,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	UIViewController * nxt = self.viewControllers[0];
 	float duration = 0;
 	if(animated) {
-		duration = self.animationDuration;
+		duration = self.duration;
 	}
 	[self popFromController:current toController:nxt withDuration:duration];
 	[self.viewControllers removeAllObjects];
@@ -668,7 +662,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 - (void) eraseStackAndPushViewController:(UIViewController *) viewController animated:(BOOL) animated; {
 	float duration = 0;
 	if(animated) {
-		duration = self.animationDuration;
+		duration = self.duration;
 	}
 	[self pushFromController:self.currentViewController toController:viewController withDuration:duration];
 	[self.viewControllers removeAllObjects];
@@ -679,7 +673,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	UIViewController * currentViewController = [self currentViewControllerByRemovingLastObject];
 	float duration = 0;
 	if(animated) {
-		duration = self.animationDuration;
+		duration = self.duration;
 	}
 	[self pushFromController:currentViewController toController:viewController withDuration:duration];
 	[_viewControllers addObject:viewController];
@@ -715,7 +709,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	return self.viewControllers.count > 1;
 }
 
-- (NSInteger) stackSize {
+- (NSInteger) count {
 	return self.viewControllers.count;
 }
 
@@ -735,7 +729,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	UIViewController * fromController = self.currentViewController;
 	float duration = 0;
 	if(animated) {
-		duration = self.animationDuration;
+		duration = self.duration;
 	}
 	NSUInteger location = index + 1;
 	NSUInteger length = self.viewControllers.count - location;
@@ -743,7 +737,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	[self popFromController:fromController toController:toController withDuration:duration];
 }
 
-- (BOOL) hasViewController:(UIViewController *) viewController {
+- (BOOL) containsViewController:(UIViewController *) viewController {
 	for(UIViewController * vc in self.viewControllers) {
 		if(vc == viewController) {
 			return TRUE;
@@ -752,7 +746,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	return FALSE;
 }
 
-- (BOOL) hasViewControllerClass:(Class)cls {
+- (BOOL) containsViewControllerClass:(Class)cls {
 	for(UIViewController * vc in self.viewControllers) {
 		if([vc class] == cls) {
 			return TRUE;

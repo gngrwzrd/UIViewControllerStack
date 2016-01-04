@@ -23,13 +23,13 @@ static ViewController * _instance;
 	UIColor * color = [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1];
 	self.navColor = color;
 	
-	self.viewStack.alwaysResizePushedViews = TRUE;
+	self.viewStack.resizeViews = TRUE;
 	self.viewStack.delegate = self;
 	
 	self.navBarStack.backgroundColor = self.navColor;
 	self.navBarStack.swipeToPop = FALSE;
-	self.navBarStack.useLayerShadowProperties = FALSE;
-	self.navBarStack.alwaysResizePushedViews = TRUE;
+	self.navBarStack.useShadows = FALSE;
+	self.navBarStack.resizeViews = TRUE;
 	self.navBarStack.animatesAlpha = TRUE;
 	self.navBarStack.delegate = self;
 	
@@ -38,7 +38,6 @@ static ViewController * _instance;
 }
 
 - (void) viewStackWillPop:(UIViewControllerStack *)viewStack toController:(UIViewController *)toController fromController:(UIViewController *)fromController wasAnimated:(BOOL) wasAnimated {
-	
 	if(viewStack == self.viewStack) {
 		[self.navBarStack popViewControllerAnimated:wasAnimated];
 	}
@@ -63,32 +62,28 @@ static ViewController * _instance;
 }
 
 - (CGFloat) startXForToController:(UIViewController *)viewController forViewStack:(UIViewControllerStack *)viewStack forOperation:(UIViewControllerStackOperation)operation {
-	
 	if(viewStack == self.navBarStack) {
 		if(operation == UIViewControllerStackOperationPush) {
-			return viewController.view.frame.size.width/6;
+			return viewController.view.frame.size.width * viewStack.distance;
 		}
 		
 		if(operation == UIViewControllerStackOperationPop) {
-			return -(viewController.view.frame.size.width/6);
+			return -(viewController.view.frame.size.width * viewStack.distance);
 		}
 	}
-	
 	return CGFLOAT_MAX;
 }
 
 - (CGFloat) endXForFromController:(UIViewController *)viewController forViewStack:(UIViewControllerStack *)viewStack forOperation:(UIViewControllerStackOperation)operation {
-	
 	if(viewStack == self.navBarStack) {
 		if(operation == UIViewControllerStackOperationPush) {
-			return -(viewController.view.frame.size.width/6);
+			return -(viewController.view.frame.size.width * viewStack.distance);
 		}
 		
 		if(operation == UIViewControllerStackOperationPop) {
-			return viewController.view.frame.size.width/6;
+			return viewController.view.frame.size.width * viewStack.distance;
 		}
 	}
-	
 	return CGFLOAT_MAX;
 }
 

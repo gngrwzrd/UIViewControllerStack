@@ -87,28 +87,27 @@ IB_DESIGNABLE
 //delegate
 @property (weak) NSObject <UIViewControllerStackDelegate> * delegate;
 
-//animation duration for push/popping view controllers that slide in / out.
-//default is .25
-@property IBInspectable CGFloat animationDuration;
+//animation duration. default is .25.
+@property IBInspectable CGFloat duration;
 
-//the distance to move view controllers when pushing / popping.
-//the distance your view controller moves is calculated by taking viewController.width/distance.
+//animation distance. a fraction of the view stack width to move view controllers by. default is .25.
 @property IBInspectable CGFloat distance;
 
-//whether to add a gesture recognizer for sipe left to right which pops a view controller.
-//default is false.
+//whether to add a gesture recognizer for sipe to pop. default is fale.
 @property (nonatomic) IBInspectable BOOL swipeToPop;
 
-//whether to set view.layer.shadow properties when views are being pushed/popped.
-@property IBInspectable BOOL useLayerShadowProperties;
+//whether to add shadows to the view controllers during animation and slide to pop.
+@property IBInspectable BOOL useShadows;
 
-//whether to animate alpha as views are being pushed / popped.
-//this has no effect when using drag gesture to pop a view controller.
+//whether to animate alpha during push/pop or slide to pop.
 @property IBInspectable BOOL animatesAlpha;
 
-//whether to always resize your views frame to match this view stack's frame.
+//whether to resize your views frame to match this view stack's frame.
 //implement methods from @protocol UIViewControllerStackUpdating to override this setting per view controller.
-@property IBInspectable BOOL alwaysResizePushedViews;
+@property IBInspectable BOOL resizeViews;
+
+//the number of view controllers in the stack.
+@property (readonly) NSInteger count;
 
 //methods for pushing/popping and altering what's displayed.
 - (void) pushViewController:(UIViewController *) viewController animated:(BOOL) animated;
@@ -120,7 +119,6 @@ IB_DESIGNABLE
 - (void) eraseStackAndPushViewController:(UIViewController *) viewController animated:(BOOL) animated;
 
 //util methods for updating what's in the stack without effecting what's displayed.
-- (void) pushViewControllers:(NSArray *) viewControllers;
 - (void) insertViewController:(UIViewController *) viewController atIndex:(NSInteger) index;
 - (void) replaceViewController:(UIViewController *) viewController withViewController:(UIViewController *) newViewController;
 
@@ -129,19 +127,18 @@ IB_DESIGNABLE
 
 //other utils
 - (BOOL) canPopViewController;
-- (BOOL) hasViewController:(UIViewController *) viewController;
-- (BOOL) hasViewControllerClass:(Class) cls;
-- (NSInteger) stackSize;
+- (BOOL) containsViewController:(UIViewController *) viewController;
+- (BOOL) containsViewControllerClass:(Class) cls;
 - (UIViewController *) currentViewController;
 - (UIViewController *) rootViewController;
 - (NSArray *) allViewControllers;
 
-//these are overridable by subclasses, or you can implement UIViewControllerStackDelegate instead.
+//these are overridable by subclasses, or you can implement UIViewControllerStackDelegate methods instead.
 - (CGPoint) startPointForToController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation;
 - (CGPoint) endPointForToController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation;
 - (CGPoint) endPointForFromController:(UIViewController *) viewController forOperation:(UIViewControllerStackOperation) operation;
 
-// these are some utils to manually animate a pop operation. see NavBarSample for example.
+//these are some utils to manually animate a pop operation. see NavBarSample for example.
 - (void) beginSwipeGestureAnimationUpdates;
 - (void) updateSwipeGestureWithDelta:(CGFloat) delta adjustDistanceMoved:(BOOL) adjustDistanceMoved;
 - (void) endSwipeGestureAnimationUpdatesShouldPop:(BOOL) shouldPop;
