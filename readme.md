@@ -19,12 +19,6 @@ You can change animation duration in interface builder, or with:
 viewStack.animationDuration = .25;
 ````
 
-You can change the duration of the animation when a swipe to pop occurs:
-
-````
-viewStack.finishDragAnimationDuration = .1;
-````
-
 ### Animation Distance
 
 You can set your view controller to move a fraction of the view stack's width.
