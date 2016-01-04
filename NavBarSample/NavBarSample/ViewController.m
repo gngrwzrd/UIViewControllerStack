@@ -53,7 +53,7 @@ static ViewController * _instance;
 
 - (void) viewStackSwipeGestureDidUpdate:(UIViewControllerStack *)viewStack delta:(CGFloat)delta {
 	if(viewStack == self.viewStack) {
-		[self.navBarStack updateSwipeGestureWithDelta:delta useMoveAmount:TRUE];
+		[self.navBarStack updateSwipeGestureWithDelta:delta adjustDistanceMoved:TRUE];
 	}
 }
 

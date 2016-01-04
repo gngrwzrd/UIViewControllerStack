@@ -37,7 +37,9 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 - (void) defaultInit {
 	self.viewControllers = [NSMutableArray array];
 	self.animationDuration = .25;
-	self.distance = 8;
+	
+	//TODO: fix animation when distance is 1
+	self.distance = .25;
 	self.finishDragAnimationDuration = .1;
 	self.animatesAlpha = FALSE;
 	self.swipeToPop = TRUE;
@@ -115,19 +117,17 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	[self panGestureStart:nil];
 }
 
-- (void) updateSwipeGestureWithDelta:(CGFloat) delta useMoveAmount:(BOOL) useMoveAmount {
+- (void) updateSwipeGestureWithDelta:(CGFloat) delta adjustDistanceMoved:(BOOL) adjustDistanceMoved {
 	UIViewController * current = self.currentViewController;
 	UIViewController * popController = [self.viewControllers objectAtIndex:(self.viewControllers.count-2)];
-	
 	CGRect currentFrame = current.view.frame;
-	CGFloat fraction = 1;
-	CGFloat update = 1;
-	CGFloat distance = 1;
+	CGFloat distance = self.frame.size.width * self.distance;
 	
-	if(useMoveAmount) {
-		update = self.frame.size.width / (currentFrame.size.width / self.distance);
+	if(adjustDistanceMoved) {
+		currentFrame.origin.x += delta*self.distance;
+	} else {
+		currentFrame.origin.x += delta;
 	}
-	currentFrame.origin.x += delta/update;
 	
 	if(currentFrame.origin.x < 0) {
 		currentFrame.origin.x = 0;
@@ -136,19 +136,17 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	}
 	
 	current.view.frame = currentFrame;
-	
 	if(self.animatesAlpha) {
-		distance = self.frame.size.width / self.distance;
-		fraction = (1 / distance);
-		update = (distance - currentFrame.origin.x) * fraction;
-		current.view.alpha = update;
+		current.view.alpha = (distance - currentFrame.origin.x) * (1 / distance);
 	}
 	
 	CGRect popFrame = popController.view.frame;
-	fraction = self.frame.size.width / (popFrame.size.width / self.distance);
-	update = delta/fraction;
-	popFrame.origin.x += update;
+	popFrame.origin.x += delta * self.distance;
 	popController.view.frame = popFrame;
+	
+	if(popFrame.origin.x > 0) {
+		popFrame.origin.x = 0;
+	}
 	
 	if(self.animatesAlpha) {
 		popController.view.alpha = (1 / self.frame.size.width) * currentFrame.origin.x;
@@ -234,7 +232,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	if([self.delegate respondsToSelector:@selector(viewStackSwipeGestureDidUpdate:delta:)]) {
 		[self.delegate viewStackSwipeGestureDidUpdate:self delta:diff];
 	}
-	[self updateSwipeGestureWithDelta:diff useMoveAmount:FALSE];
+	[self updateSwipeGestureWithDelta:diff adjustDistanceMoved:FALSE];
 	self.swipeLocation = location;
 }
 
@@ -313,7 +311,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	}
 	
 	if(operation == UIViewControllerStackOperationPop) {
-		return CGPointMake(-(viewController.view.frame.size.width/self.distance),0);
+		return CGPointMake(-(viewController.view.frame.size.width*self.distance),0);
 	}
 	
 	return CGPointZero;
@@ -338,7 +336,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	}
 	
 	if(operation == UIViewControllerStackOperationPush) {
-		return CGPointMake(-(viewController.view.frame.size.width/self.distance),0);
+		return CGPointMake(-(viewController.view.frame.size.width*self.distance),0);
 	}
 	
 	if(operation == UIViewControllerStackOperationPop) {

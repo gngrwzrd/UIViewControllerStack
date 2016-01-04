@@ -97,7 +97,7 @@ IB_DESIGNABLE
 
 //the distance to move view controllers when pushing / popping.
 //the distance your view controller moves is calculated by taking viewController.width/distance.
-@property IBInspectable NSInteger distance;
+@property IBInspectable CGFloat distance;
 
 //whether to add a gesture recognizer for drag left to right which pops a view controller.
 //default is false.
@@ -147,7 +147,7 @@ IB_DESIGNABLE
 
 // these are some utils to manually animate a pop operation. see NavBarSample for example.
 - (void) beginSwipeGestureAnimationUpdates;
-- (void) updateSwipeGestureWithDelta:(CGFloat) delta useMoveAmount:(BOOL) useMoveAmount;
+- (void) updateSwipeGestureWithDelta:(CGFloat) delta adjustDistanceMoved:(BOOL) adjustDistanceMoved;
 - (void) endSwipeGestureAnimationUpdatesShouldPop:(BOOL) shouldPop;
 
 @end
