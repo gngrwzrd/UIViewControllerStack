@@ -17,10 +17,17 @@ static ViewController * _instance;
 	[super viewDidLoad];
 	_instance = self;
 	
+	CGFloat hue = ( arc4random() % 256 / 256.0 );  //  0.0 to 1.0
+	CGFloat saturation = ( arc4random() % 128 / 256.0 ) + 0.5;  //  0.5 to 1.0, away from white
+	CGFloat brightness = ( arc4random() % 128 / 256.0 ) + 0.5;  //  0.5 to 1.0, away from black
+	UIColor * color = [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1];
+	self.navColor = color;
+	
 	self.viewStack.useLayerShadowProperties = FALSE;
 	self.viewStack.alwaysResizePushedViews = TRUE;
 	self.viewStack.delegate = self;
 	
+	self.navBarStack.backgroundColor = self.navColor;
 	self.navBarStack.useLayerShadowProperties = FALSE;
 	self.navBarStack.alwaysResizePushedViews = TRUE;
 	self.navBarStack.delegate = self;

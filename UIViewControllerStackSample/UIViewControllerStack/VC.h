@@ -1,7 +1,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface VC1Nav : UIViewController
+@interface VC : UIViewController
 
 @property IBOutlet UIButton * popButton;
 

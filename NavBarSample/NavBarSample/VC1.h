@@ -1,8 +1,7 @@
 
 #import <UIKit/UIKit.h>
-#import "BaseVC.h"
 #import "UIViewControllerStack.h"
 
-@interface VC1 : BaseVC <UIViewControllerStackUpdating>
+@interface VC1 : UIViewController <UIViewControllerStackUpdating>
 
 @end

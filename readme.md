@@ -6,6 +6,9 @@ It gives you an interface much like UINavigationController, but without the over
 
 It gives you hooks you'd need to setup things like top navigation bars, or bottom tool bars - allowing you to set it up how you like, instead of being constrained to one control.
 
+![NavBarSample](http://www.gngrwzrd.com/downloads/UIViewControllerStackSample.gif)
+![NavBarSample](http://www.gngrwzrd.com/downloads/NavBarSample.gif)
+
 ## UIViewControllerStack Object
 
 ### Animation Duration

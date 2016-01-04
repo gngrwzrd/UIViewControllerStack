@@ -6,6 +6,7 @@
 
 @property IBOutlet UIViewControllerStack * viewStack;
 @property IBOutlet UIViewControllerStack * navBarStack;
+@property UIColor * navColor;
 
 + (ViewController *) instance;
 
