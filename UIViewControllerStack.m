@@ -76,7 +76,7 @@ NSString * const UIViewControllerStackNotificationUserInfoFromControllerKey = @"
 	return self.panGesture != nil;
 }
 
-- (void) setSwipeToPop:(BOOL)swipeToPop {
+- (void) setSwipeToPop:(BOOL) swipeToPop {
 	if(swipeToPop) {
 		[self addPanGestureRecognizer];
 	} else if(self.panGesture) {

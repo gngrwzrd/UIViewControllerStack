@@ -93,8 +93,8 @@ IB_DESIGNABLE
 //animation distance. a fraction of the view stack width to move view controllers by. default is .25.
 @property IBInspectable CGFloat distance;
 
-//whether to add a gesture recognizer for sipe to pop. default is fale.
-@property (nonatomic) IBInspectable BOOL swipeToPop;
+//whether to add a gesture recognizer for sipe to pop. default is false.
+@property IBInspectable BOOL swipeToPop;
 
 //whether to add shadows to the view controllers during animation and slide to pop.
 @property IBInspectable BOOL useShadows;
